@@ -1,13 +1,13 @@
-﻿@model IEnumerable<PRJ_VETERINARIA.Models.Especie>
+﻿@model IEnumerable<PRJ_VETERINARIA.Models.CategoriaProducto>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Lista de Especies</h1>
+<h1>Index</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Agregar Especie</a>
+    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -17,6 +17,12 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EsMedicamento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequiereReceta)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Activo)
@@ -40,6 +46,12 @@
                 @Html.DisplayFor(modelItem => item.Descripcion)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.EsMedicamento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequiereReceta)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Activo)
             </td>
             <td>
@@ -49,9 +61,9 @@
                 @Html.DisplayFor(modelItem => item.FechaModificacion)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdEspecie">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdEspecie">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdEspecie">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.IdCategoria">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdCategoria">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdCategoria">Delete</a>
             </td>
         </tr>
 }
