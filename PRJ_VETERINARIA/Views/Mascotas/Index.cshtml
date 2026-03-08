@@ -1,0 +1,119 @@
+﻿@model IEnumerable<PRJ_VETERINARIA.Models.Mascota>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista de Mascotas</h1>
+
+<p>
+    <a asp-action="Create">Agregar mascota</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaNacimiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sexo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ColorPelaje)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MicrochipId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FotoUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaFallecimiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Activo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdClienteNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdEspecieNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdRazaNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaNacimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sexo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColorPelaje)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MicrochipId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FotoUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaFallecimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Activo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdClienteNavigation.IdCliente)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdEspecieNavigation.IdEspecie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdRazaNavigation.IdRaza)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdMascota">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdMascota">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdMascota">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
