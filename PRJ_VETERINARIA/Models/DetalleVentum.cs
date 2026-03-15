@@ -29,5 +29,5 @@ public partial class DetalleVentum
 
     public virtual Producto IdProductoNavigation { get; set; } = null!;
 
-    public virtual Ventum IdVentaNavigation { get; set; } = null!;
+    public virtual Venta IdVentaNavigation { get; set; } = null!;
 }

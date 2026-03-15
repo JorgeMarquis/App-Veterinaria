@@ -41,5 +41,5 @@ public partial class Cliente
 
     public virtual ICollection<Mascota> Mascota { get; set; } = new List<Mascota>();
 
-    public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
+    public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
 }

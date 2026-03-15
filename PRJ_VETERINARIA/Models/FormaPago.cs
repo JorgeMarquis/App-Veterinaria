@@ -21,5 +21,5 @@ public partial class FormaPago
 
     public virtual ICollection<Compra> Compras { get; set; } = new List<Compra>();
 
-    public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
+    public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
 }

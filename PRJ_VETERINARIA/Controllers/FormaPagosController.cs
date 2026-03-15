@@ -9,22 +9,22 @@ using PRJ_VETERINARIA.Models;
 
 namespace PRJ_VETERINARIA.Controllers
 {
-    public class CategoriaProductoesController : Controller
+    public class FormaPagosController : Controller
     {
         private readonly BDVeterinariaContext _context;
 
-        public CategoriaProductoesController(BDVeterinariaContext context)
+        public FormaPagosController(BDVeterinariaContext context)
         {
             _context = context;
         }
 
-        // GET: CategoriaProductoes
+        // GET: FormaPagoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CategoriaProductos.ToListAsync());
+            return View(await _context.FormaPagos.ToListAsync());
         }
 
-        // GET: CategoriaProductoes/Details/5
+        // GET: FormaPagoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +32,39 @@ namespace PRJ_VETERINARIA.Controllers
                 return NotFound();
             }
 
-            var categoriaProducto = await _context.CategoriaProductos
-                .FirstOrDefaultAsync(m => m.IdCategoria == id);
-            if (categoriaProducto == null)
+            var formaPago = await _context.FormaPagos
+                .FirstOrDefaultAsync(m => m.IdFormaPago == id);
+            if (formaPago == null)
             {
                 return NotFound();
             }
 
-            return View(categoriaProducto);
+            return View(formaPago);
         }
 
-        // GET: CategoriaProductoes/Create
+        // GET: FormaPagoes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: CategoriaProductoes/Create
+        // POST: FormaPagoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCategoria,Nombre,Descripcion,EsMedicamento,RequiereReceta,Activo,FechaCreacion,FechaModificacion")] CategoriaProducto categoriaProducto)
+        public async Task<IActionResult> Create([Bind("IdFormaPago,Nombre,ComisionPorcentaje,RequiereAutorizacion,Activo,FechaCreacion,FechaModificacion")] FormaPago formaPago)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(categoriaProducto);
+                _context.Add(formaPago);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categoriaProducto);
+            return View(formaPago);
         }
 
-        // GET: CategoriaProductoes/Edit/5
+        // GET: FormaPagoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +72,22 @@ namespace PRJ_VETERINARIA.Controllers
                 return NotFound();
             }
 
-            var categoriaProducto = await _context.CategoriaProductos.FindAsync(id);
-            if (categoriaProducto == null)
+            var formaPago = await _context.FormaPagos.FindAsync(id);
+            if (formaPago == null)
             {
                 return NotFound();
             }
-            return View(categoriaProducto);
+            return View(formaPago);
         }
 
-        // POST: CategoriaProductoes/Edit/5
+        // POST: FormaPagoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCategoria,Nombre,Descripcion,EsMedicamento,RequiereReceta,Activo,FechaCreacion,FechaModificacion")] CategoriaProducto categoriaProducto)
+        public async Task<IActionResult> Edit(int id, [Bind("IdFormaPago,Nombre,ComisionPorcentaje,RequiereAutorizacion,Activo,FechaCreacion,FechaModificacion")] FormaPago formaPago)
         {
-            if (id != categoriaProducto.IdCategoria)
+            if (id != formaPago.IdFormaPago)
             {
                 return NotFound();
             }
@@ -96,12 +96,12 @@ namespace PRJ_VETERINARIA.Controllers
             {
                 try
                 {
-                    _context.Update(categoriaProducto);
+                    _context.Update(formaPago);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoriaProductoExists(categoriaProducto.IdCategoria))
+                    if (!FormaPagoExists(formaPago.IdFormaPago))
                     {
                         return NotFound();
                     }
@@ -112,10 +112,10 @@ namespace PRJ_VETERINARIA.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(categoriaProducto);
+            return View(formaPago);
         }
 
-        // GET: CategoriaProductoes/Delete/5
+        // GET: FormaPagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,34 +123,34 @@ namespace PRJ_VETERINARIA.Controllers
                 return NotFound();
             }
 
-            var categoriaProducto = await _context.CategoriaProductos
-                .FirstOrDefaultAsync(m => m.IdCategoria == id);
-            if (categoriaProducto == null)
+            var formaPago = await _context.FormaPagos
+                .FirstOrDefaultAsync(m => m.IdFormaPago == id);
+            if (formaPago == null)
             {
                 return NotFound();
             }
 
-            return View(categoriaProducto);
+            return View(formaPago);
         }
 
-        // POST: CategoriaProductoes/Delete/5
+        // POST: FormaPagoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var categoriaProducto = await _context.CategoriaProductos.FindAsync(id);
-            if (categoriaProducto != null)
+            var formaPago = await _context.FormaPagos.FindAsync(id);
+            if (formaPago != null)
             {
-                _context.CategoriaProductos.Remove(categoriaProducto);
+                _context.FormaPagos.Remove(formaPago);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoriaProductoExists(int id)
+        private bool FormaPagoExists(int id)
         {
-            return _context.CategoriaProductos.Any(e => e.IdCategoria == id);
+            return _context.FormaPagos.Any(e => e.IdFormaPago == id);
         }
     }
 }

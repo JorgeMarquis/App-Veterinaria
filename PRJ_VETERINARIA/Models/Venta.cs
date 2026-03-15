@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace PRJ_VETERINARIA.Models;
 
-public partial class Ventum
+public partial class Venta
 {
     public int IdVenta { get; set; }
 
     public int IdCliente { get; set; }
 
     public int? IdAtencion { get; set; }
-
     public int IdUsuario { get; set; }
 
     public DateTime Fecha { get; set; }

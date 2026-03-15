@@ -59,5 +59,5 @@ public partial class Atencion
 
     public virtual Usuario IdVeterinarioNavigation { get; set; } = null!;
 
-    public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
+    public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
 }
