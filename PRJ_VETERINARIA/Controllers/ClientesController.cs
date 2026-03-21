@@ -48,18 +48,31 @@ namespace PRJ_VETERINARIA.Controllers
             return View();
         }
 
-        // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdCliente,NombreCompleto,TipoIdentificacion,NumIdentificacion,Email,TelefonoPrincipal,TelefonoAlternativo,Direccion,Ciudad,ContactoEmergencia,TelefonoEmergencia,Observaciones,Activo,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(cliente);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
+                    {
+                        ModelState.AddModelError("", "Ya existe un cliente con el mismo tipo y número de identificación.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Ocurrió un error al guardar el cliente. Intente nuevamente.");
+                    }
+                    throw;
+                }
             }
             return View(cliente);
         }
@@ -81,8 +94,7 @@ namespace PRJ_VETERINARIA.Controllers
         }
 
         // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdCliente,NombreCompleto,TipoIdentificacion,NumIdentificacion,Email,TelefonoPrincipal,TelefonoAlternativo,Direccion,Ciudad,ContactoEmergencia,TelefonoEmergencia,Observaciones,Activo,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy")] Cliente cliente)
@@ -98,6 +110,7 @@ namespace PRJ_VETERINARIA.Controllers
                 {
                     _context.Update(cliente);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -110,7 +123,17 @@ namespace PRJ_VETERINARIA.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
+                    {
+                        ModelState.AddModelError("", "Ya existe un cliente con el mismo tipo y número de identificación.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Ocurrió un error al actualizar el cliente.");
+                    }
+                }
             }
             return View(cliente);
         }
@@ -141,10 +164,18 @@ namespace PRJ_VETERINARIA.Controllers
             var cliente = await _context.Clientes.FindAsync(id);
             if (cliente != null)
             {
-                _context.Clientes.Remove(cliente);
+                try
+                {
+                    _context.Clientes.Remove(cliente);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "No se puede eliminar el cliente porque tiene registros asociados (mascotas, ventas, etc.).");
+                    return View(cliente);
+                }
             }
-
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

@@ -21,7 +21,10 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: Mascotas
         public async Task<IActionResult> Index()
         {
-            var bDVeterinariaContext = _context.Mascota.Include(m => m.IdClienteNavigation).Include(m => m.IdEspecieNavigation).Include(m => m.IdRazaNavigation);
+            var bDVeterinariaContext = _context.Mascota
+                .Include(m => m.IdClienteNavigation)
+                .Include(m => m.IdEspecieNavigation)
+                .Include(m => m.IdRazaNavigation);
             return View(await bDVeterinariaContext.ToListAsync());
         }
 
@@ -64,9 +67,23 @@ namespace PRJ_VETERINARIA.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(mascota);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(mascota);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException?.Message.Contains("UK_Mascota_Microchip") == true)
+                    {
+                        ModelState.AddModelError("MicrochipId", "El microchip ya está registrado para otra mascota.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Ocurrió un error al guardar la mascota. Intente nuevamente.");
+                    }
+                }
             }
             ViewData["IdCliente"] = new SelectList(_context.Clientes, "IdCliente", "IdCliente", mascota.IdCliente);
             ViewData["IdEspecie"] = new SelectList(_context.Especies, "IdEspecie", "IdEspecie", mascota.IdEspecie);
@@ -94,8 +111,6 @@ namespace PRJ_VETERINARIA.Controllers
         }
 
         // POST: Mascotas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdMascota,IdCliente,Nombre,IdEspecie,IdRaza,FechaNacimiento,Sexo,ColorPelaje,MicrochipId,FotoUrl,FechaFallecimiento,Activo,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy")] Mascota mascota)
@@ -111,6 +126,7 @@ namespace PRJ_VETERINARIA.Controllers
                 {
                     _context.Update(mascota);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,7 +139,17 @@ namespace PRJ_VETERINARIA.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException?.Message.Contains("UK_Mascota_Microchip") == true)
+                    {
+                        ModelState.AddModelError("MicrochipId", "El microchip ya está registrado para otra mascota.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Ocurrió un error al actualizar la mascota.");
+                    }
+                }
             }
             ViewData["IdCliente"] = new SelectList(_context.Clientes, "IdCliente", "IdCliente", mascota.IdCliente);
             ViewData["IdEspecie"] = new SelectList(_context.Especies, "IdEspecie", "IdEspecie", mascota.IdEspecie);
@@ -160,10 +186,19 @@ namespace PRJ_VETERINARIA.Controllers
             var mascota = await _context.Mascota.FindAsync(id);
             if (mascota != null)
             {
-                _context.Mascota.Remove(mascota);
+                try
+                {
+                    _context.Mascota.Remove(mascota);
+                    await _context.SaveChangesAsync();
+
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "No se puede eliminar la mascota porque tiene registros asociados (atenciones, vacunas, etc.).");
+                    return View(mascota);
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
