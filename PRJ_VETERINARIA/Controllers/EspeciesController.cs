@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.ViewModels.Especies;
 
 namespace PRJ_VETERINARIA.Controllers
 {
@@ -45,7 +46,7 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: Especies/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new EspecieViewModel());
         }
 
         // POST: Especies/Create
@@ -53,31 +54,60 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdEspecie,Nombre,Descripcion,Activo,FechaCreacion,FechaModificacion")] Especie especie)
+        public async Task<IActionResult> Create(EspecieViewModel especieViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return View(especieViewModel);
+            }
+            
+            var especie = new Especie
+            {
+                Nombre = especieViewModel.Nombre.Trim(),
+                Descripcion = especieViewModel.Descripcion,
+                Activo = true,
+                FechaCreacion = DateTime.Now,
+            };
+
+            try
             {
                 _context.Add(especie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(especie);
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_Especie_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(especieViewModel.Nombre),
+                        "Ya existe una especie con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+                return View(especieViewModel);
+            }
         }
 
         // GET: Especies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var especie = await _context.Especies.FindAsync(id);
-            if (especie == null)
+            if (especie == null) return NotFound();
+
+            var especieViewModel = new EspecieViewModel
             {
-                return NotFound();
-            }
-            return View(especie);
+                IdEspecie = especie.IdEspecie,
+                Nombre = especie.Nombre,
+                Descripcion = especie.Descripcion,
+                Activo = especie.Activo
+            };
+
+            return View(especieViewModel);
         }
 
         // POST: Especies/Edit/5
@@ -85,34 +115,43 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdEspecie,Nombre,Descripcion,Activo,FechaCreacion,FechaModificacion")] Especie especie)
+        public async Task<IActionResult> Edit(EspecieViewModel especieView)
         {
-            if (id != especie.IdEspecie)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid) return View(especieView);
 
-            if (ModelState.IsValid)
+            var especie = await _context.Especies.FindAsync(especieView.IdEspecie);
+            if (especie == null) return NotFound();
+
+            especie.Nombre = especieView.Nombre!.Trim();
+            especie.Descripcion = especieView.Descripcion?.Trim();
+            especie.Activo = especieView.Activo;
+            especie.FechaModificacion = DateTime.Now;
+            
+            try
             {
-                try
-                {
-                    _context.Update(especie);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EspecieExists(especie.IdEspecie))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(especieView);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(especie);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EspecieExists(especieView.IdEspecie)) return NotFound();
+                else throw;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_Especie_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(especieView.Nombre),
+                        "Ya existe una especie con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+                return View(especieView);
+            }
         }
 
         // GET: Especies/Delete/5
@@ -139,13 +178,20 @@ namespace PRJ_VETERINARIA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var especie = await _context.Especies.FindAsync(id);
-            if (especie != null)
+            if (especie == null) return NotFound();
+            try
             {
                 _context.Especies.Remove(especie);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se pudo eliminar la especie. Asegúrese de que no esté asociada a mascotas o razas.");
+                return View(especie);
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool EspecieExists(int id)

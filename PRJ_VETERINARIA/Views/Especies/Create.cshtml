@@ -1,7 +1,7 @@
-﻿@model PRJ_VETERINARIA.Models.Especie
+﻿@model PRJ_VETERINARIA.ViewModels.Especies.EspecieViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nueva Especie";
 }
 
 <h1>Create</h1>
@@ -19,16 +19,11 @@
             </div>
             <div class="form-group">
                 <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
+                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FechaModificacion" class="control-label"></label>
-                <input asp-for="FechaModificacion" class="form-control" />
-                <span asp-validation-for="FechaModificacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
     </div>
