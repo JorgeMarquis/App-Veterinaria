@@ -33,7 +33,7 @@ public partial class BDVeterinariaContext : DbContext
 
     public virtual DbSet<DetalleCompra> DetalleCompras { get; set; }
 
-    public virtual DbSet<DetalleVentum> DetalleVenta { get; set; }
+    public virtual DbSet<DetalleVenta> DetalleVenta { get; set; }
 
     public virtual DbSet<Especie> Especies { get; set; }
 
@@ -337,7 +337,7 @@ public partial class BDVeterinariaContext : DbContext
                 .HasConstraintName("FK_DetalleCompra_Prod");
         });
 
-        modelBuilder.Entity<DetalleVentum>(entity =>
+        modelBuilder.Entity<DetalleVenta>(entity =>
         {
             entity.HasKey(e => e.IdDetalle);
 

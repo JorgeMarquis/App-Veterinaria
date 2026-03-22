@@ -38,7 +38,6 @@ public partial class Cliente
     [DisplayName("Dirección")]
     public string Direccion { get; set; } = null!;
 
-    
     public string Ciudad { get; set; } = null!;
 
     [DisplayName("Contacto de Emergencia")]

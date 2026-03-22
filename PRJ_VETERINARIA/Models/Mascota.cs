@@ -39,7 +39,7 @@ public partial class Mascota
     [Display(Name = "Microchip ID")]
     public string MicrochipId { get; set; } = null!;
 
-    [Display(Name = "Foto URL")]
+    [Display(Name = "Foto")]
     public string? FotoUrl { get; set; }
 
     [Display(Name = "Fecha de Fallecimiento")]

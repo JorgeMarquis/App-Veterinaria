@@ -7,11 +7,14 @@
 <h1>Lista de Mascotas</h1>
 
 <p>
-    <a asp-action="Create">Agregar mascota</a>
-</p>
+    <a asp-action="Create" class="btn btn-primary">Agregar mascota</a>
+</p>    
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FotoUrl)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
@@ -28,25 +31,10 @@
                 @Html.DisplayNameFor(model => model.MicrochipId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FotoUrl)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FechaFallecimiento)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Activo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedBy)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IdClienteNavigation)
@@ -57,12 +45,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.IdRazaNavigation)
             </th>
-            <th></th>
+            <th class="text-center">Acciones</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FotoUrl)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Nombre)
             </td>
@@ -79,25 +70,10 @@
                 @Html.DisplayFor(modelItem => item.MicrochipId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FotoUrl)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.FechaFallecimiento)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IdClienteNavigation.IdCliente)

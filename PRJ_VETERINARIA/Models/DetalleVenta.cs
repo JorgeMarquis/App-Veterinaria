@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PRJ_VETERINARIA.Models;
 
-public partial class DetalleVentum
+public partial class DetalleVenta
 {
     public int IdDetalle { get; set; }
 

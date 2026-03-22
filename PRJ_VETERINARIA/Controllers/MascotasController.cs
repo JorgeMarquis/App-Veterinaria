@@ -52,9 +52,9 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: Mascotas/Create
         public IActionResult Create()
         {
-            ViewData["IdCliente"] = new SelectList(_context.Clientes, "IdCliente", "IdCliente");
-            ViewData["IdEspecie"] = new SelectList(_context.Especies, "IdEspecie", "IdEspecie");
-            ViewData["IdRaza"] = new SelectList(_context.Razas, "IdRaza", "IdRaza");
+            ViewData["IdCliente"] = new SelectList(_context.Clientes, "IdCliente", "NombreCompleto");
+            ViewData["IdEspecie"] = new SelectList(_context.Especies, "IdEspecie", "Nombre");
+            ViewData["IdRaza"] = new SelectList(_context.Razas, "IdRaza", "Nombre");
             return View();
         }
 

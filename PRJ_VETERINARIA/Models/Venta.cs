@@ -40,7 +40,7 @@ public partial class Venta
 
     public string? UpdatedBy { get; set; }
 
-    public virtual ICollection<DetalleVentum> DetalleVenta { get; set; } = new List<DetalleVentum>();
+    public virtual ICollection<DetalleVenta> DetalleVenta { get; set; } = new List<DetalleVenta>();
 
     public virtual Atencion? IdAtencionNavigation { get; set; }
 

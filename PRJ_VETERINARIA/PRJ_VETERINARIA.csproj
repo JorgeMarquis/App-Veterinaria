@@ -15,4 +15,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\CategoriaProductos\" />
+    <Folder Include="ViewModels\FormaPagos\" />
+    <Folder Include="ViewModels\Proveedores\" />
+    <Folder Include="ViewModels\Usuarios\" />
+    <Folder Include="ViewModels\Vacunas\" />
+    <Folder Include="ViewModels\TipoServicios\" />
+    <Folder Include="ViewModels\Razas\" />
+  </ItemGroup>
+
 </Project>
