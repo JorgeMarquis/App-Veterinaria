@@ -1,95 +1,98 @@
 ﻿@model IEnumerable<PRJ_VETERINARIA.Models.Mascota>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Mascotas";
 }
 
-<h1>Lista de Mascotas</h1>
+<div class="container mt-4">
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Agregar mascota</a>
-</p>    
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FotoUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaNacimiento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sexo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ColorPelaje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MicrochipId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaFallecimiento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Activo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdClienteNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdEspecieNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdRazaNavigation)
-            </th>
-            <th class="text-center">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FotoUrl)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaNacimiento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sexo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ColorPelaje)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MicrochipId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFallecimiento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdClienteNavigation.IdCliente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdEspecieNavigation.IdEspecie)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdRazaNavigation.IdRaza)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdMascota">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdMascota">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdMascota">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-semibold text-dark">
+            🐾 Gestión de Mascotas
+        </h4>
+        <a asp-action="Create" class="btn btn-outline-primary btn-sm">
+            + Nueva Mascota
+        </a>
+    </div>
+
+    @foreach (var item in Model)
+    {
+        <div class="card mb-2 shadow-sm">
+            <div class="card-body py-2">
+
+                <div class="row align-items-center gy-2">
+
+                    <!-- Foto -->
+                    <div class="col-md-1 text-center">
+                        <img src="@item.FotoUrl"
+                             alt="Foto mascota"
+                             class="rounded"
+                             style="width:60px;height:60px;object-fit:cover;border:1px solid #ddd;" />
+                    </div>
+
+                    <!-- Nombre y datos -->
+                    <div class="col-md-3">
+                        <div class="fw-semibold">@item.Nombre</div>
+                        <div class="small text-muted">
+                            Pelaje: @item.ColorPelaje
+                        </div>
+                        <div class="small text-muted">
+                            Nac.: @item.FechaNacimiento?.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-2 text-center">
+                        @if (item.Activo)
+                        {
+                            <span class="badge bg-success-subtle text-success">
+                                Activo
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger-subtle text-danger">
+                                Inactivo
+                            </span>
+                        }
+                    </div>
+
+                    <!-- Información clave -->
+                    <div class="col-md-3 small text-muted">
+                        <div>Microchip: @item.MicrochipId</div>
+                        <div>
+                            Fallecimiento:
+                            @(item.FechaFallecimiento != null
+                                ? item.FechaFallecimiento.Value.ToString("dd/MM/yyyy")
+                                : "-")
+                        </div>
+                    </div>
+
+                    <!-- Relaciones -->
+                    <div class="col-md-2 small">
+                        <div><strong>Cliente:</strong> @item.IdClienteNavigation?.IdCliente</div>
+                        <div><strong>Especie:</strong> @item.IdEspecieNavigation?.IdEspecie</div>
+                        <div><strong>Raza:</strong> @item.IdRazaNavigation?.IdRaza</div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="col-md-1 text-end">
+                        <a asp-action="Edit" asp-route-id="@item.IdMascota"
+                               class="btn btn-sm btn-link text-warning">
+                            ✏️
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.IdMascota"
+                               class="btn btn-sm btn-link text-info">
+                            👁️
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.IdMascota"
+                               class="btn btn-sm btn-link text-danger">
+                            🗑️
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
