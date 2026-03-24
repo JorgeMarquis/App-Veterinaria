@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.ViewModels.CategoriaProductos;
 
 namespace PRJ_VETERINARIA.Controllers
 {
@@ -21,23 +22,21 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: CategoriaProductoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CategoriaProductos.ToListAsync());
+            var categorias = await _context.CategoriaProductos
+                .OrderBy(c => c.Nombre)
+                .ToListAsync();
+            return View(categorias);
         }
 
         // GET: CategoriaProductoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var categoriaProducto = await _context.CategoriaProductos
                 .FirstOrDefaultAsync(m => m.IdCategoria == id);
-            if (categoriaProducto == null)
-            {
-                return NotFound();
-            }
+
+            if (categoriaProducto == null) return NotFound();
 
             return View(categoriaProducto);
         }
@@ -45,7 +44,7 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: CategoriaProductoes/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new CategoriaProductoViewModel());
         }
 
         // POST: CategoriaProductoes/Create
@@ -53,31 +52,62 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCategoria,Nombre,Descripcion,EsMedicamento,RequiereReceta,Activo,FechaCreacion,FechaModificacion")] CategoriaProducto categoriaProducto)
+        public async Task<IActionResult> Create(CategoriaProductoViewModel catprodVM)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(catprodVM);
+
+            var categoria = new CategoriaProducto
             {
-                _context.Add(categoriaProducto);
+                Nombre = catprodVM.Nombre!.Trim(),
+                Descripcion = catprodVM.Descripcion?.Trim(),
+                EsMedicamento = catprodVM.EsMedicamento,
+                RequiereReceta = catprodVM.RequiereReceta,
+                Activo = true,
+                FechaCreacion = DateTime.Now
+            };
+
+            try
+            {
+                _context.Add(categoria);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categoriaProducto);
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_CategoriaProducto_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(catprodVM.Nombre),
+                        "Ya existe una categoría con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+
+                return View(catprodVM);
+            }
         }
 
         // GET: CategoriaProductoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var categoriaProducto = await _context.CategoriaProductos.FindAsync(id);
-            if (categoriaProducto == null)
+            var categoria = await _context.CategoriaProductos.FindAsync(id);
+            if (categoria == null) return NotFound();
+
+            var viewmodel = new CategoriaProductoViewModel
             {
-                return NotFound();
-            }
-            return View(categoriaProducto);
+                IdCategoria = categoria.IdCategoria,
+                Nombre = categoria.Nombre,
+                Descripcion = categoria.Descripcion,
+                EsMedicamento = categoria.EsMedicamento,
+                RequiereReceta = categoria.RequiereReceta,
+                Activo = categoria.Activo
+            };
+
+            return View(viewmodel);
         }
 
         // POST: CategoriaProductoes/Edit/5
@@ -85,50 +115,57 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCategoria,Nombre,Descripcion,EsMedicamento,RequiereReceta,Activo,FechaCreacion,FechaModificacion")] CategoriaProducto categoriaProducto)
+        public async Task<IActionResult> Edit(CategoriaProductoViewModel cpViewModel)
         {
-            if (id != categoriaProducto.IdCategoria)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid) return View(cpViewModel);
 
-            if (ModelState.IsValid)
+            var categoria = await _context.CategoriaProductos.FindAsync(cpViewModel.IdCategoria);
+            if (categoria == null) return NotFound();
+
+            categoria.Nombre = cpViewModel.Nombre!.Trim();
+            categoria.Descripcion = cpViewModel.Descripcion?.Trim();
+            categoria.EsMedicamento = cpViewModel.EsMedicamento;
+            categoria.RequiereReceta = cpViewModel.RequiereReceta;
+            categoria.Activo = cpViewModel.Activo;
+            categoria.FechaModificacion = DateTime.Now;
+
+            try
             {
-                try
-                {
-                    _context.Update(categoriaProducto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoriaProductoExists(categoriaProducto.IdCategoria))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(categoria);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(categoriaProducto);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoriaProductoExists(cpViewModel.IdCategoria)) return NotFound();
+                else throw;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_CategoriaProducto_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(cpViewModel.Nombre),
+                        "Ya existe una categoría con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al actualizar.");
+                }
+
+                return View(cpViewModel);
+            }
         }
 
         // GET: CategoriaProductoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            
             var categoriaProducto = await _context.CategoriaProductos
                 .FirstOrDefaultAsync(m => m.IdCategoria == id);
-            if (categoriaProducto == null)
-            {
-                return NotFound();
-            }
+
+            if (categoriaProducto == null) return NotFound();
 
             return View(categoriaProducto);
         }
@@ -138,14 +175,21 @@ namespace PRJ_VETERINARIA.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var categoriaProducto = await _context.CategoriaProductos.FindAsync(id);
-            if (categoriaProducto != null)
-            {
-                _context.CategoriaProductos.Remove(categoriaProducto);
-            }
+            var categoria = await _context.CategoriaProductos.FindAsync(id);
+            if (categoria == null) return NotFound();
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.CategoriaProductos.Remove(categoria);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se puede eliminar esta categoría porque tiene productos asociados.");
+                return View(categoria);
+            }
         }
 
         private bool CategoriaProductoExists(int id)

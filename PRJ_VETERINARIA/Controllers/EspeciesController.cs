@@ -129,7 +129,7 @@ namespace PRJ_VETERINARIA.Controllers
             
             try
             {
-                _context.Update(especieView);
+                _context.Update(especie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

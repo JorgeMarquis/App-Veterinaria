@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.ViewModels.FormaPagos;
 
 namespace PRJ_VETERINARIA.Controllers
 {
@@ -21,23 +22,22 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: FormaPagoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FormaPagos.ToListAsync());
+            var formasPago = await _context.FormaPagos
+                .OrderBy(f => f.Nombre)
+                .ToListAsync();
+
+            return View(formasPago);
         }
 
         // GET: FormaPagoes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var formaPago = await _context.FormaPagos
                 .FirstOrDefaultAsync(m => m.IdFormaPago == id);
-            if (formaPago == null)
-            {
-                return NotFound();
-            }
+
+            if (formaPago == null) return NotFound();
 
             return View(formaPago);
         }
@@ -45,7 +45,7 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: FormaPagoes/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new FormaPagoViewModel());
         }
 
         // POST: FormaPagoes/Create
@@ -53,31 +53,61 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFormaPago,Nombre,ComisionPorcentaje,RequiereAutorizacion,Activo,FechaCreacion,FechaModificacion")] FormaPago formaPago)
+        public async Task<IActionResult> Create(FormaPagoViewModel formapagovm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(formapagovm);
+
+            var formaPago = new FormaPago
+            {
+                Nombre = formapagovm.Nombre!.Trim(),
+                ComisionPorcentaje = formapagovm.ComisionPorcentaje,
+                RequiereAutorizacion = formapagovm.RequiereAutorizacion,
+                Activo = true,
+                FechaCreacion = DateTime.Now
+            };
+
+            try
             {
                 _context.Add(formaPago);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(formaPago);
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_FormaPago_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(formapagovm.Nombre),
+                        "Ya existe una forma de pago con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+
+                return View(formapagovm);
+            }
         }
 
         // GET: FormaPagoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var formaPago = await _context.FormaPagos.FindAsync(id);
-            if (formaPago == null)
+            if (formaPago == null) return NotFound();
+
+            var v_formapagovm = new FormaPagoViewModel
             {
-                return NotFound();
-            }
-            return View(formaPago);
+                IdFormaPago = formaPago.IdFormaPago,
+                Nombre = formaPago.Nombre,
+                ComisionPorcentaje = formaPago.ComisionPorcentaje,
+                RequiereAutorizacion = formaPago.RequiereAutorizacion,
+                Activo = formaPago.Activo
+            };
+
+            return View(v_formapagovm);
         }
 
         // POST: FormaPagoes/Edit/5
@@ -85,50 +115,57 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdFormaPago,Nombre,ComisionPorcentaje,RequiereAutorizacion,Activo,FechaCreacion,FechaModificacion")] FormaPago formaPago)
+        public async Task<IActionResult> Edit(FormaPagoViewModel vm)
         {
-            if (id != formaPago.IdFormaPago)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid)
+                return View(vm);
 
-            if (ModelState.IsValid)
+            var formaPago = await _context.FormaPagos.FindAsync(vm.IdFormaPago);
+            if (formaPago == null) return NotFound();
+
+            formaPago.Nombre = vm.Nombre!.Trim();
+            formaPago.ComisionPorcentaje = vm.ComisionPorcentaje;
+            formaPago.RequiereAutorizacion = vm.RequiereAutorizacion;
+            formaPago.Activo = vm.Activo;
+            formaPago.FechaModificacion = DateTime.Now;
+
+            try
             {
-                try
-                {
-                    _context.Update(formaPago);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FormaPagoExists(formaPago.IdFormaPago))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(formaPago);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(formaPago);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FormaPagoExists(vm.IdFormaPago)) return NotFound();
+                else throw;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_FormaPago_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(vm.Nombre),
+                        "Ya existe una forma de pago con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al actualizar.");
+                }
+
+                return View(vm);
+            }
         }
 
         // GET: FormaPagoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var formaPago = await _context.FormaPagos
                 .FirstOrDefaultAsync(m => m.IdFormaPago == id);
-            if (formaPago == null)
-            {
-                return NotFound();
-            }
+
+            if (formaPago == null) return NotFound();
 
             return View(formaPago);
         }
@@ -139,13 +176,20 @@ namespace PRJ_VETERINARIA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var formaPago = await _context.FormaPagos.FindAsync(id);
-            if (formaPago != null)
+            if (formaPago == null) return NotFound();
+
+            try
             {
                 _context.FormaPagos.Remove(formaPago);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se puede eliminar esta forma de pago porque tiene ventas o compras asociadas.");
+                return View(formaPago);
+            }
         }
 
         private bool FormaPagoExists(int id)

@@ -7,22 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModels\CategoriaProductos\" />
-    <Folder Include="ViewModels\FormaPagos\" />
-    <Folder Include="ViewModels\Proveedores\" />
-    <Folder Include="ViewModels\Usuarios\" />
-    <Folder Include="ViewModels\Vacunas\" />
-    <Folder Include="ViewModels\TipoServicios\" />
-    <Folder Include="ViewModels\Razas\" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.ViewModels.TipoServicios;
 
 namespace PRJ_VETERINARIA.Controllers
 {
@@ -21,23 +22,22 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: TipoServicios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TipoServicios.ToListAsync());
+            var tiposServicio = await _context.TipoServicios
+                .OrderBy(t => t.Nombre)
+                .ToListAsync();
+
+            return View(tiposServicio);
         }
 
         // GET: TipoServicios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if(id == null) return NotFound();
 
             var tipoServicio = await _context.TipoServicios
                 .FirstOrDefaultAsync(m => m.IdTipoServicio == id);
-            if (tipoServicio == null)
-            {
-                return NotFound();
-            }
+
+            if (tipoServicio == null) return NotFound();
 
             return View(tipoServicio);
         }
@@ -45,7 +45,7 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: TipoServicios/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new TipoServicioViewModel());
         }
 
         // POST: TipoServicios/Create
@@ -53,31 +53,60 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTipoServicio,Nombre,EsMedico,DuracionEstimadaMin,Activo,FechaCreacion,FechaModificacion")] TipoServicio tipoServicio)
+        public async Task<IActionResult> Create(TipoServicioViewModel tsViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(tsViewModel);
+
+            var tipoServicio = new TipoServicio
+            {
+                Nombre = tsViewModel.Nombre!.Trim(),
+                EsMedico = tsViewModel.EsMedico,
+                DuracionEstimadaMin = tsViewModel.DuracionEstimadaMin,
+                Activo = true,
+                FechaCreacion = DateTime.Now
+            };
+
+            try
             {
                 _context.Add(tipoServicio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(tipoServicio);
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_TipoServicio_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(tsViewModel.Nombre),
+                        "Ya existe un tipo de servicio con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+
+                return View(tsViewModel);
+            }
         }
 
         // GET: TipoServicios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var tipoServicio = await _context.TipoServicios.FindAsync(id);
-            if (tipoServicio == null)
+            if (tipoServicio == null) return NotFound();
+
+            var v_tsViewModel = new TipoServicioViewModel
             {
-                return NotFound();
-            }
-            return View(tipoServicio);
+                IdTipoServicio = tipoServicio.IdTipoServicio,
+                Nombre = tipoServicio.Nombre,
+                EsMedico = tipoServicio.EsMedico,
+                DuracionEstimadaMin = tipoServicio.DuracionEstimadaMin,
+                Activo = tipoServicio.Activo
+            };
+
+            return View(v_tsViewModel);
         }
 
         // POST: TipoServicios/Edit/5
@@ -85,50 +114,57 @@ namespace PRJ_VETERINARIA.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTipoServicio,Nombre,EsMedico,DuracionEstimadaMin,Activo,FechaCreacion,FechaModificacion")] TipoServicio tipoServicio)
+        public async Task<IActionResult> Edit(TipoServicioViewModel tsViewModel)
         {
-            if (id != tipoServicio.IdTipoServicio)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid)
+                return View(tsViewModel);
 
-            if (ModelState.IsValid)
+            var tipoServicio = await _context.TipoServicios.FindAsync(tsViewModel.IdTipoServicio);
+            if (tipoServicio == null) return NotFound();
+
+            tipoServicio.Nombre = tsViewModel.Nombre!.Trim();
+            tipoServicio.EsMedico = tsViewModel.EsMedico;
+            tipoServicio.DuracionEstimadaMin = tsViewModel.DuracionEstimadaMin;
+            tipoServicio.Activo = tsViewModel.Activo;
+            tipoServicio.FechaModificacion = DateTime.Now;
+
+            try
             {
-                try
-                {
-                    _context.Update(tipoServicio);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TipoServicioExists(tipoServicio.IdTipoServicio))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(tipoServicio);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(tipoServicio);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TipoServicioExists(tsViewModel.IdTipoServicio)) return NotFound();
+                else throw;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_TipoServicio_Nombre") == true)
+                {
+                    ModelState.AddModelError(nameof(tsViewModel.Nombre),
+                        "Ya existe un tipo de servicio con ese nombre.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al actualizar.");
+                }
+
+                return View(tsViewModel);
+            }
         }
 
         // GET: TipoServicios/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var tipoServicio = await _context.TipoServicios
                 .FirstOrDefaultAsync(m => m.IdTipoServicio == id);
-            if (tipoServicio == null)
-            {
-                return NotFound();
-            }
+
+            if (tipoServicio == null) return NotFound();
 
             return View(tipoServicio);
         }
@@ -139,13 +175,20 @@ namespace PRJ_VETERINARIA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tipoServicio = await _context.TipoServicios.FindAsync(id);
-            if (tipoServicio != null)
+            if (tipoServicio == null) return NotFound();
+
+            try
             {
                 _context.TipoServicios.Remove(tipoServicio);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se puede eliminar este tipo de servicio porque tiene servicios asociados.");
+                return View(tipoServicio);
+            }
         }
 
         private bool TipoServicioExists(int id)
