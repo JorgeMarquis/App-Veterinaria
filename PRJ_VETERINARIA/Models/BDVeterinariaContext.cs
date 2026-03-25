@@ -553,7 +553,9 @@ public partial class BDVeterinariaContext : DbContext
 
             entity.Property(e => e.Activo).HasDefaultValue(true);
             entity.Property(e => e.CodigoBarras).HasMaxLength(50);
-            entity.Property(e => e.CodigoInterno).HasMaxLength(50);
+            entity.Property(e => e.CodigoInterno)
+                  .HasMaxLength(50)
+                  .ValueGeneratedOnAdd();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetime())");
             entity.Property(e => e.CreatedBy).HasMaxLength(150);
             entity.Property(e => e.Descripcion).HasMaxLength(1000);

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.ViewModels.Clientes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PRJ_VETERINARIA.Controllers
 {
@@ -21,23 +22,23 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clientes.ToListAsync());
+            var clientes = await _context.Clientes
+                .Where(c => c.Activo)
+                .OrderBy(c => c.NombreCompleto)
+                .ToListAsync();
+
+            return View(clientes);
         }
 
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.IdCliente == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
+
+            if (cliente == null) return NotFound();
 
             return View(cliente);
         }
@@ -45,113 +46,159 @@ namespace PRJ_VETERINARIA.Controllers
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            return View();
+            ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+            return View(new ClienteViewModel());
         }
 
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCliente,NombreCompleto,TipoIdentificacion,NumIdentificacion,Email,TelefonoPrincipal,TelefonoAlternativo,Direccion,Ciudad,ContactoEmergencia,TelefonoEmergencia,Observaciones,Activo,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy")] Cliente cliente)
+        public async Task<IActionResult> Create(ClienteViewModel clientevm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Add(cliente);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException ex)
-                {
-                    if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
-                    {
-                        ModelState.AddModelError("", "Ya existe un cliente con el mismo tipo y número de identificación.");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Ocurrió un error al guardar el cliente. Intente nuevamente.");
-                    }
-                    throw;
-                }
+                ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+                return View(clientevm);
             }
-            return View(cliente);
+
+            var cliente = new Cliente
+            {
+                TipoIdentificacion = clientevm.TipoIdentificacion!,
+                NumIdentificacion = clientevm.NumIdentificacion!.Trim(),
+                NombreCompleto = clientevm.NombreCompleto!.Trim(),
+                TelefonoPrincipal = clientevm.TelefonoPrincipal!.Trim(),
+                Direccion = clientevm.Direccion!.Trim(),
+                Ciudad = clientevm.Ciudad!.Trim(),
+                Email = clientevm.Email?.Trim().ToLower(),
+                TelefonoAlternativo = clientevm.TelefonoAlternativo?.Trim(),
+                ContactoEmergencia = clientevm.ContactoEmergencia?.Trim(),
+                TelefonoEmergencia = clientevm.TelefonoEmergencia?.Trim(),
+                Observaciones = clientevm.Observaciones?.Trim(),
+                Activo = true,
+                CreatedAt = DateTime.Now
+            };
+
+            try
+            {
+                _context.Add(cliente);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                // Constraint compuesta — error pertenece a los dos campos juntos
+                if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ya existe un cliente con ese tipo y número de identificación.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al guardar. Intente nuevamente.");
+                }
+
+                ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+                return View(clientevm);
+            }
         }
 
         // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente == null)
+            if (cliente == null) return NotFound();
+
+            var vm = new ClienteViewModel
             {
-                return NotFound();
-            }
-            return View(cliente);
+                IdCliente = cliente.IdCliente,
+                TipoIdentificacion = cliente.TipoIdentificacion,
+                NumIdentificacion = cliente.NumIdentificacion,
+                NombreCompleto = cliente.NombreCompleto,
+                TelefonoPrincipal = cliente.TelefonoPrincipal,
+                Direccion = cliente.Direccion,
+                Ciudad = cliente.Ciudad,
+                Email = cliente.Email,
+                TelefonoAlternativo = cliente.TelefonoAlternativo,
+                ContactoEmergencia = cliente.ContactoEmergencia,
+                TelefonoEmergencia = cliente.TelefonoEmergencia,
+                Observaciones = cliente.Observaciones,
+                Activo = cliente.Activo
+            };
+
+            ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+            return View(vm);
         }
 
         // POST: Clientes/Edit/5
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCliente,NombreCompleto,TipoIdentificacion,NumIdentificacion,Email,TelefonoPrincipal,TelefonoAlternativo,Direccion,Ciudad,ContactoEmergencia,TelefonoEmergencia,Observaciones,Activo,CreatedAt,CreatedBy,UpdatedAt,UpdatedBy")] Cliente cliente)
+        public async Task<IActionResult> Edit(ClienteViewModel clientevm)
         {
-            if (id != cliente.IdCliente)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+                return View(clientevm);
             }
 
-            if (ModelState.IsValid)
+            var cliente = await _context.Clientes.FindAsync(clientevm.IdCliente);
+            if (cliente == null) return NotFound();
+
+            cliente.TipoIdentificacion = clientevm.TipoIdentificacion!;
+            cliente.NumIdentificacion = clientevm.NumIdentificacion!.Trim();
+            cliente.NombreCompleto = clientevm.NombreCompleto!.Trim();
+            cliente.TelefonoPrincipal = clientevm.TelefonoPrincipal!.Trim();
+            cliente.Direccion = clientevm.Direccion!.Trim();
+            cliente.Ciudad = clientevm.Ciudad!.Trim();
+            cliente.Email = clientevm.Email?.Trim().ToLower();
+            cliente.TelefonoAlternativo = clientevm.TelefonoAlternativo?.Trim();
+            cliente.ContactoEmergencia = clientevm.ContactoEmergencia?.Trim();
+            cliente.TelefonoEmergencia = clientevm.TelefonoEmergencia?.Trim();
+            cliente.Observaciones = clientevm.Observaciones?.Trim();
+            cliente.Activo = clientevm.Activo;
+            cliente.UpdatedAt = DateTime.Now;
+
+            try
             {
-                try
-                {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClienteExists(cliente.IdCliente))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                catch (DbUpdateException ex)
-                {
-                    if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
-                    {
-                        ModelState.AddModelError("", "Ya existe un cliente con el mismo tipo y número de identificación.");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Ocurrió un error al actualizar el cliente.");
-                    }
-                }
+                _context.Update(cliente);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            return View(cliente);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await ClienteExists(clientevm.IdCliente)) return NotFound();
+                else throw;
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException?.Message.Contains("UK_Cliente_Identificacion") == true)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ya existe un cliente con ese tipo y número de identificación.");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Ocurrió un error al actualizar.");
+                }
+
+                ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
+                return View(clientevm);
+            }
         }
 
         // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(m => m.IdCliente == id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
+
+            if (cliente == null) return NotFound();
 
             return View(cliente);
         }
@@ -162,26 +209,25 @@ namespace PRJ_VETERINARIA.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
-            if (cliente != null)
+            if (cliente == null) return NotFound();
+
+            try
             {
-                try
-                {
-                    _context.Clientes.Remove(cliente);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateException)
-                {
-                    ModelState.AddModelError("", "No se puede eliminar el cliente porque tiene registros asociados (mascotas, ventas, etc.).");
-                    return View(cliente);
-                }
+                _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "No se puede eliminar este cliente porque tiene mascotas o ventas asociadas.");
+                return View(cliente);
+            }
         }
 
-        private bool ClienteExists(int id)
+        private async Task<bool> ClienteExists(int id)
         {
-            return _context.Clientes.Any(e => e.IdCliente == id);
+            return await _context.Clientes.AnyAsync(e => e.IdCliente == id);
         }
     }
 }
