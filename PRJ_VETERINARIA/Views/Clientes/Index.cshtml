@@ -1,125 +1,101 @@
 ﻿@model IEnumerable<PRJ_VETERINARIA.Models.Cliente>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Clientes";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreCompleto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoIdentificacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumIdentificacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TelefonoPrincipal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TelefonoAlternativo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Direccion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ciudad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContactoEmergencia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TelefonoEmergencia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Observaciones)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Activo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedBy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NombreCompleto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoIdentificacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumIdentificacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TelefonoPrincipal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TelefonoAlternativo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Direccion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ciudad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContactoEmergencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TelefonoEmergencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Observaciones)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdCliente">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdCliente">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdCliente">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="bi bi-people-fill"></i> Listado de Clientes
+            </h4>
+            <a asp-action="Create" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Nuevo Cliente
+            </a>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Documento</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Ciudad</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.NombreCompleto</strong>
+                                </td>
+
+                                <td>
+                                    @item.TipoIdentificacion
+                                    <br />
+                                    <small class="text-muted">@item.NumIdentificacion</small>
+                                </td>
+
+                                <td>@item.Email</td>
+
+                                <td>
+                                    @item.TelefonoPrincipal
+                                    @if (!string.IsNullOrEmpty(item.TelefonoAlternativo))
+                                    {
+                                        <br />
+                                        <small class="text-muted">@item.TelefonoAlternativo</small>
+                                    }
+                                </td>
+
+                                <td>@item.Ciudad</td>
+
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.IdCliente"
+                                           class="btn btn-sm btn-info me-1" title="Ver">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.IdCliente"
+                                           class="btn btn-sm btn-warning me-1" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.IdCliente"
+                                           class="btn btn-sm btn-danger" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="card-footer text-muted small">
+            Total de clientes: @Model.Count()
+        </div>
+    </div>
+
+</div>
