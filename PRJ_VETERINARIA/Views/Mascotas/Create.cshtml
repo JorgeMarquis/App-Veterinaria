@@ -1,85 +1,107 @@
 ﻿@model PRJ_VETERINARIA.Models.Mascota
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registrar Mascota";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
 
-<h4>Mascota</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="IdCliente" class="control-label"></label>
-                <select asp-for="IdCliente" class ="form-control" asp-items="ViewBag.IdCliente"></select>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">🐾 Registrar Mascota</h4>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdCliente" class="form-label fw-bold"></label>
+                            <select asp-for="IdCliente" class="form-select" asp-items="ViewBag.IdCliente"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label fw-bold"></label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre de la mascota" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdEspecie" class="form-label fw-bold"></label>
+                            <select asp-for="IdEspecie" class="form-select" asp-items="ViewBag.IdEspecie"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdRaza" class="form-label fw-bold"></label>
+                            <select asp-for="IdRaza" class="form-select" asp-items="ViewBag.IdRaza"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FechaNacimiento" class="form-label fw-bold"></label>
+                            <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                            <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ColorPelaje" class="form-label fw-bold"></label>
+                            <input asp-for="ColorPelaje" class="form-control" placeholder="Color del pelaje" />
+                            <span asp-validation-for="ColorPelaje" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MicrochipId" class="form-label fw-bold"></label>
+                            <input asp-for="MicrochipId" class="form-control" placeholder="Código de microchip (opcional)" />
+                            <span asp-validation-for="MicrochipId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FotoUrl" class="form-label fw-bold"></label>
+                            <input asp-for="FotoUrl" class="form-control" placeholder="URL de la foto" />
+                            <span asp-validation-for="FotoUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FechaFallecimiento" class="form-label fw-bold"></label>
+                            <input asp-for="FechaFallecimiento" type="date" class="form-control" />
+                            <span asp-validation-for="FechaFallecimiento" class="text-danger"></span>
+                        </div>
+
+                        <!-- Campos de auditoría (puedes ocultarlos luego si deseas) -->
+                        <div class="mb-3">
+                            <label asp-for="CreatedBy" class="form-label fw-bold"></label>
+                            <input asp-for="CreatedBy" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UpdatedAt" class="form-label fw-bold"></label>
+                            <input asp-for="UpdatedAt" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UpdatedBy" class="form-label fw-bold"></label>
+                            <input asp-for="UpdatedBy" class="form-control" />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                💾 Guardar Mascota
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                ↩ Volver a la Lista
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdEspecie" class="control-label"></label>
-                <select asp-for="IdEspecie" class ="form-control" asp-items="ViewBag.IdEspecie"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdRaza" class="control-label"></label>
-                <select asp-for="IdRaza" class ="form-control" asp-items="ViewBag.IdRaza"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaNacimiento" class="control-label"></label>
-                <input asp-for="FechaNacimiento" class="form-control" />
-                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ColorPelaje" class="control-label"></label>
-                <input asp-for="ColorPelaje" class="form-control" />
-                <span asp-validation-for="ColorPelaje" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MicrochipId" class="control-label"></label>
-                <input asp-for="MicrochipId" class="form-control" />
-                <span asp-validation-for="MicrochipId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FotoUrl" class="control-label"></label>
-                <input asp-for="FotoUrl" class="form-control" />
-                <span asp-validation-for="FotoUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaFallecimiento" class="control-label"></label>
-                <input asp-for="FechaFallecimiento" class="form-control" />
-                <span asp-validation-for="FechaFallecimiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedBy" class="control-label"></label>
-                <input asp-for="UpdatedBy" class="form-control" />
-                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
