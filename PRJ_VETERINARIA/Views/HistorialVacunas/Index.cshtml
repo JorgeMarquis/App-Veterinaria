@@ -1,0 +1,89 @@
+﻿@model IEnumerable<PRJ_VETERINARIA.Models.HistorialVacuna>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaAplicacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaProximoRefuerzo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DosisNumero)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReaccionesAdversas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Observaciones)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdLoteNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdMascotaNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdVacunaNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdVeterinarioNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaAplicacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaProximoRefuerzo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DosisNumero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReaccionesAdversas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Observaciones)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdLoteNavigation.IdLote)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdMascotaNavigation.IdMascota)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdVacunaNavigation.IdVacuna)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdVeterinarioNavigation.IdUsuario)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdHistorial">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdHistorial">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdHistorial">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,5 +1,5 @@
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 
 namespace PRJ_VETERINARIA.ViewModels.Desparasitaciones
 {
@@ -11,56 +11,55 @@ namespace PRJ_VETERINARIA.ViewModels.Desparasitaciones
         [Display(Name = "Mascota")]
         public int? IdMascota { get; set; }
 
-        [Display(Name = "Mascota (Lectura)")]
-        public string NombreMascota { get; set; } = string.Empty;
+        [Required(ErrorMessage = "El producto es obligatorio.")]
+        [Display(Name = "Producto")]
+        public int? IdProducto { get; set; }
 
         [Required(ErrorMessage = "El veterinario es obligatorio.")]
         [Display(Name = "Veterinario")]
         public int? IdVeterinario { get; set; }
 
-        [Display(Name = "Veterinario (Lectura)")]
-        public string NombreVeterinario { get; set; } = string.Empty;
+        [Required(ErrorMessage = "El tipo es obligatorio.")]
+        [StringLength(20)]
+        [Display(Name = "Tipo de desparasitación")]
+        public string? TipoDesparasitacion { get; set; }
 
-        [Required(ErrorMessage = "El producto es obligatorio.")]
-        [Display(Name = "Producto")]
-        public int? IdProducto { get; set; }
-
-        [Display(Name = "Producto (Lectura)")]
-        public string NombreProducto { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "La fecha es obligatoria.")]
+        [Required(ErrorMessage = "La fecha de aplicación es obligatoria.")]
         [DataType(DataType.Date)]
-        [Display(Name = "Fecha")]
-        public DateTime Fecha { get; set; } = DateTime.Today;
+        [Display(Name = "Fecha de aplicación")]
+        public DateTime FechaAplicacion { get; set; } = DateTime.Today;
 
-        [Required(ErrorMessage = "La dosis es obligatoria.")]
-        [Display(Name = "Dosis")]
+        [DataType(DataType.Date)]
+        [Display(Name = "Fecha próxima")]
+        public DateOnly? FechaProxima { get; set; }
+
+        [Range(0.01, 999.99, ErrorMessage = "El peso debe ser mayor a 0.")]
+        [Display(Name = "Peso en aplicación (kg)")]
+        public decimal? PesoAplicacion { get; set; }
+
         [StringLength(100)]
-        public string? Dosis { get; set; }
+        [Display(Name = "Dosis aplicada")]
+        public string? DosisAplicada { get; set; }
 
-        [Display(Name = "Vía de Administración")]
-        [StringLength(50)]
-        public string? ViaAdministracion { get; set; }
-
-        [Display(Name = "Próxima Desparasitación")]
-        [DataType(DataType.Date)]
-        public DateTime? ProximaFecha { get; set; }
-
-        [Display(Name = "Observaciones")]
         [StringLength(500)]
+        [Display(Name = "Observaciones")]
         public string? Observaciones { get; set; }
-
-        [Display(Name = "Activo")]
-        public bool Activo { get; set; } = true;
 
         // Listas para dropdowns
         public IEnumerable<SelectListItem> MascotasDisponibles { get; set; }
             = Enumerable.Empty<SelectListItem>();
 
-        public IEnumerable<SelectListItem> VeterinariasDisponibles { get; set; }
-            = Enumerable.Empty<SelectListItem>();
-
         public IEnumerable<SelectListItem> ProductosDisponibles { get; set; }
             = Enumerable.Empty<SelectListItem>();
+
+        public IEnumerable<SelectListItem> VeterinariosDisponibles { get; set; }
+            = Enumerable.Empty<SelectListItem>();
+
+        public static readonly List<SelectListItem> TiposDesparasitacion = new()
+        {
+            new SelectListItem { Value = "Interna",  Text = "Interna" },
+            new SelectListItem { Value = "Externa",  Text = "Externa" },
+            new SelectListItem { Value = "Mixta",    Text = "Mixta" }
+        };
     }
 }
