@@ -17,10 +17,4 @@
     <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.22" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Business Logic Layer\" />
-    <Folder Include="Data Access Layer\" />
-    <Folder Include="UI\" />
-  </ItemGroup>
-
 </Project>

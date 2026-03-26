@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using PRJ_VETERINARIA.Models;
+using PRJ_VETERINARIA.DataAccessLayer.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

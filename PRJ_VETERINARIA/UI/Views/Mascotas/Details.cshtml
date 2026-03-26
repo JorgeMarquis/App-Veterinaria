@@ -1,0 +1,148 @@
+@model PRJ_VETERINARIA.DataAccessLayer.Models.Mascota
+
+@{
+    ViewData["Title"] = Model?.Nombre ?? "Detalles de Mascota";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-paw-fill"></i> @Model?.Nombre
+                        </h4>
+                        @if (Model?.Activo == true)
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> Activo
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle"></i> Inactivo
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-person-fill"></i> Cliente
+                            </h6>
+                            <p class="fw-bold">@Model?.IdClienteNavigation?.NombreCompleto</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-calendar-event"></i> Fecha de Nacimiento
+                            </h6>
+                            <p class="fw-bold">@Model?.FechaNacimiento?.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-tags-fill"></i> Especie
+                            </h6>
+                            <p class="fw-bold">@Model?.IdEspecieNavigation?.Nombre</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-bookmark-fill"></i> Raza
+                            </h6>
+                            <p class="fw-bold">@Model?.IdRazaNavigation?.Nombre</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-venus-mars"></i> Sexo
+                            </h6>
+                            <p class="fw-bold">@Model?.Sexo</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-palette-fill"></i> Color de Pelaje
+                            </h6>
+                            <p class="fw-bold">@Model?.ColorPelaje</p>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-barcode"></i> Microchip ID
+                            </h6>
+                            <p class="fw-bold">@(string.IsNullOrEmpty(Model?.MicrochipId) ? "No registrado" : Model.MicrochipId)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">
+                                <i class="bi bi-image"></i> Foto
+                            </h6>
+                            @if (!string.IsNullOrEmpty(Model?.FotoUrl))
+                            {
+                                <img src="@Model.FotoUrl" alt="@Model?.Nombre" class="img-thumbnail" style="max-width: 150px;" />
+                            }
+                            else
+                            {
+                                <p class="text-muted">Sin foto registrada</p>
+                            }
+                        </div>
+                    </div>
+
+                    @if (Model?.FechaFallecimiento.HasValue == true)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            Fecha de Fallecimiento: <strong>@Model.FechaFallecimiento.Value.ToString("dd/MM/yyyy")</strong>
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="row text-muted small">
+                        <div class="col-md-6">
+                            <p><i class="bi bi-plus-circle"></i> Creado: @Model?.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            @if (!string.IsNullOrEmpty(Model?.CreatedBy))
+                            {
+                                <p><i class="bi bi-person"></i> Por: @Model.CreatedBy</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (Model?.UpdatedAt.HasValue == true)
+                            {
+                                <p><i class="bi bi-pencil-square"></i> Actualizado: @Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                                {
+                                    <p><i class="bi bi-person"></i> Por: @Model.UpdatedBy</p>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model?.IdMascota" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model?.IdMascota" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

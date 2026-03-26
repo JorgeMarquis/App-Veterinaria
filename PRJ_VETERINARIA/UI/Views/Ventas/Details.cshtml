@@ -1,0 +1,129 @@
+@model PRJ_VETERINARIA.DataAccessLayer.Models.Venta
+
+@{
+    ViewData["Title"] = "Detalles de Venta";
+}
+
+<div class="container mt-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Detalles de la Venta</h2>
+            <span class="text-muted">Información registrada</span>
+        </div>
+    </div>
+
+    <!-- Card con detalles -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light border-bottom">
+            <h5 class="mb-0">Información de la Venta</h5>
+        </div>
+        <div class="card-body">
+            <!-- Información General -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Fecha</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Fecha)</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Número de Comprobante</h6>
+                    <p class="fw-semibold">@(string.IsNullOrEmpty(Model.NumeroComprobante) ? "-" : Model.NumeroComprobante)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Datos de Clientes y Relacionados -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Cliente</h6>
+                    <p class="fw-semibold">@(Model.IdClienteNavigation == null ? "-" : Model.IdClienteNavigation.IdCliente.ToString())</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Atención</h6>
+                    <p class="fw-semibold">@(Model.IdAtencionNavigation == null ? "-" : Model.IdAtencionNavigation.IdAtencion.ToString())</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Forma de Pago</h6>
+                    <p class="fw-semibold">@(Model.IdFormaPagoNavigation == null ? "-" : Model.IdFormaPagoNavigation.IdFormaPago.ToString())</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Montos -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Subtotal</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Subtotal)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Descuento</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Descuento)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Impuestos</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Impuestos)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Total</h6>
+                    <p class="fw-semibold fs-5">@Html.DisplayFor(model => model.Total)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Estado y Documento -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Estado de Pago</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.EstadoPago)</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Ruta PDF</h6>
+                    <p>@(string.IsNullOrEmpty(Model.RutaPdf) ? "-" : Model.RutaPdf)</p>
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h6 class="text-muted small mb-2">Observaciones</h6>
+                    <p>@(string.IsNullOrEmpty(Model.Observaciones) ? "-" : Model.Observaciones)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Auditoría -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Creado</h6>
+                    <p class="small">@Html.DisplayFor(model => model.CreatedAt)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Por</h6>
+                    <p class="small">@Model.CreatedBy</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Actualizado</h6>
+                    <p class="small">@Html.DisplayFor(model => model.UpdatedAt)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Por</h6>
+                    <p class="small">@Model.UpdatedBy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model?.IdVenta" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Editar
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+</div>
