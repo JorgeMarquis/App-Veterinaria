@@ -1,4 +1,4 @@
-﻿@model PRJ_VETERINARIA.Models.Mascota
+﻿@model PRJ_VETERINARIA.ViewModels.Mascotas.MascotaViewModel
 
 @{
     ViewData["Title"] = "Registrar Mascota";
@@ -19,7 +19,7 @@
 
                         <div class="mb-3">
                             <label asp-for="IdCliente" class="form-label fw-bold"></label>
-                            <select asp-for="IdCliente" class="form-select" asp-items="ViewBag.IdCliente"></select>
+                            <select asp-for="IdCliente" class="form-select" asp-items="Model.ClientesDisponibles"></select>
                         </div>
 
                         <div class="mb-3">
@@ -30,18 +30,24 @@
 
                         <div class="mb-3">
                             <label asp-for="IdEspecie" class="form-label fw-bold"></label>
-                            <select asp-for="IdEspecie" class="form-select" asp-items="ViewBag.IdEspecie"></select>
+                            <select asp-for="IdEspecie" class="form-select" asp-items="Model.EspeciesDisponibles"></select>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="IdRaza" class="form-label fw-bold"></label>
-                            <select asp-for="IdRaza" class="form-select" asp-items="ViewBag.IdRaza"></select>
+                            <select asp-for="IdRaza" class="form-select" asp-items="Model.RazasDisponibles"></select>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="FechaNacimiento" class="form-label fw-bold"></label>
                             <input asp-for="FechaNacimiento" type="date" class="form-control" />
                             <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Sexo" class="form-label fw-bold"></label>
+                            <input asp-for="Sexo" class="form-control" placeholder="Sexo: Ej. Macho(M), Hembra(H)"/>
+                            <span asp-validation-for="Sexo" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
@@ -66,22 +72,6 @@
                             <label asp-for="FechaFallecimiento" class="form-label fw-bold"></label>
                             <input asp-for="FechaFallecimiento" type="date" class="form-control" />
                             <span asp-validation-for="FechaFallecimiento" class="text-danger"></span>
-                        </div>
-
-                        <!-- Campos de auditoría (puedes ocultarlos luego si deseas) -->
-                        <div class="mb-3">
-                            <label asp-for="CreatedBy" class="form-label fw-bold"></label>
-                            <input asp-for="CreatedBy" class="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="UpdatedAt" class="form-label fw-bold"></label>
-                            <input asp-for="UpdatedAt" class="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="UpdatedBy" class="form-label fw-bold"></label>
-                            <input asp-for="UpdatedBy" class="form-control" />
                         </div>
 
                         <div class="d-grid gap-2">

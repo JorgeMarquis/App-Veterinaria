@@ -5,94 +5,55 @@
 }
 
 <div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="fw-semibold text-dark">
-            🐾 Gestión de Mascotas
-        </h4>
-        <a asp-action="Create" class="btn btn-outline-primary btn-sm">
-            + Nueva Mascota
-        </a>
+    <div class="row mb-3">
+        <div class="col">
+            <h2>🐾 Mascotas Registradas</h2>
+        </div>
+        <div class="col text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                ➕ Registrar Nueva Mascota
+            </a>
+        </div>
     </div>
 
-    @foreach (var item in Model)
+    @if (Model.Any())
     {
-        <div class="card mb-2 shadow-sm">
-            <div class="card-body py-2">
-
-                <div class="row align-items-center gy-2">
-
-                    <!-- Foto -->
-                    <div class="col-md-1 text-center">
-                        <img src="@item.FotoUrl"
-                             alt="Foto mascota"
-                             class="rounded"
-                             style="width:60px;height:60px;object-fit:cover;border:1px solid #ddd;" />
-                    </div>
-
-                    <!-- Nombre y datos -->
-                    <div class="col-md-3">
-                        <div class="fw-semibold">@item.Nombre</div>
-                        <div class="small text-muted">
-                            Pelaje: @item.ColorPelaje
-                        </div>
-                        <div class="small text-muted">
-                            Nac.: @item.FechaNacimiento?.ToString("dd/MM/yyyy")
-                        </div>
-                    </div>
-
-                    <!-- Estado -->
-                    <div class="col-md-2 text-center">
-                        @if (item.Activo)
-                        {
-                            <span class="badge bg-success-subtle text-success">
-                                Activo
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger-subtle text-danger">
-                                Inactivo
-                            </span>
-                        }
-                    </div>
-
-                    <!-- Información clave -->
-                    <div class="col-md-3 small text-muted">
-                        <div>Microchip: @item.MicrochipId</div>
-                        <div>
-                            Fallecimiento:
-                            @(item.FechaFallecimiento != null
-                                ? item.FechaFallecimiento.Value.ToString("dd/MM/yyyy")
-                                : "-")
-                        </div>
-                    </div>
-
-                    <!-- Relaciones -->
-                    <div class="col-md-2 small">
-                        <div><strong>Cliente:</strong> @item.IdClienteNavigation?.IdCliente</div>
-                        <div><strong>Especie:</strong> @item.IdEspecieNavigation?.IdEspecie</div>
-                        <div><strong>Raza:</strong> @item.IdRazaNavigation?.IdRaza</div>
-                    </div>
-
-                    <!-- Acciones -->
-                    <div class="col-md-1 text-end">
-                        <a asp-action="Edit" asp-route-id="@item.IdMascota"
-                               class="btn btn-sm btn-link text-warning">
-                            ✏️
-                        </a>
-                        <a asp-action="Details" asp-route-id="@item.IdMascota"
-                               class="btn btn-sm btn-link text-info">
-                            👁️
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.IdMascota"
-                               class="btn btn-sm btn-link text-danger">
-                            🗑️
-                        </a>
-                    </div>
-
-                </div>
-            </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Cliente</th>
+                        <th>Especie</th>
+                        <th>Raza</th>
+                        <th>Sexo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var mascota in Model)
+                    {
+                        <tr>
+                            <td>@mascota.Nombre</td>
+                            <td>@mascota.IdClienteNavigation?.NombreCompleto</td>
+                            <td>@mascota.IdEspecieNavigation?.Nombre</td>
+                            <td>@mascota.IdRazaNavigation?.Nombre</td>
+                            <td>@mascota.Sexo</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-info">👁 Ver</a>
+                                <a asp-action="Edit" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-warning">✏ Editar</a>
+                                <a asp-action="Delete" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-danger">🗑 Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No hay mascotas registradas.
         </div>
     }
 </div>
