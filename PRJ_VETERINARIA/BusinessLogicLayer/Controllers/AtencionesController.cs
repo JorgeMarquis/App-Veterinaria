@@ -156,13 +156,13 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                 for (int i = 0; i < vm.Detalles.Count; i++)
                 {
                     var d = vm.Detalles[i];
-                    if (d.TipoItem == "Producto" && d.IdProducto == null)
+                    if (d.TipoItem == "PRODUCTO" && d.IdProducto == null)
                     {
                         ModelState.AddModelError(
                             $"Detalles[{i}].IdProducto",
                             "Debe seleccionar un producto.");
                     }
-                    if (d.TipoItem == "Servicio" && d.IdServicio == null)
+                    if (d.TipoItem == "SERVICIO" && d.IdServicio == null)
                     {
                         ModelState.AddModelError(
                             $"Detalles[{i}].IdServicio",
@@ -211,9 +211,9 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                     var detalle = new DetalleAtencion
                     {
                         IdAtencion = atencion.IdAtencion,
-                        IdProducto = item.TipoItem == "Producto"
+                        IdProducto = item.TipoItem == "PRODUCTO"
                                               ? item.IdProducto : null,
-                        IdServicio = item.TipoItem == "Servicio"
+                        IdServicio = item.TipoItem == "SERVICIO"
                                               ? item.IdServicio : null,
                         TipoItem = item.TipoItem!,
                         Cantidad = item.Cantidad,

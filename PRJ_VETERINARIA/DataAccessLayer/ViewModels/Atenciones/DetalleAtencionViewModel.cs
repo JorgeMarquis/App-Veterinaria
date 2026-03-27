@@ -57,8 +57,8 @@ namespace PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones
 
         public static readonly List<SelectListItem> TiposItem = new()
         {
-            new SelectListItem { Value = "Producto", Text = "Producto" },
-            new SelectListItem { Value = "Servicio", Text = "Servicio" }
+            new SelectListItem { Value = "PRODUCTO", Text = "Producto" },
+            new SelectListItem { Value = "SERVICIO", Text = "Servicio" }
         };
     }
 }
