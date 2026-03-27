@@ -17,7 +17,7 @@
 <form asp-action="Create" method="post" id="atencionForm">
     @Html.AntiForgeryToken()
 
-    <div asp-validation-summary="ModelOnly" class="alert-vet alert-danger-vet mb-3"
+    <div asp-validation-summary="All" class="alert-vet alert-danger-vet mb-3"
          style="@(ViewData.ModelState.IsValid ? "display:none" : "")">
         <i class="bi bi-exclamation-circle"></i>
         <div>Corrija los errores antes de continuar.</div>
@@ -213,7 +213,11 @@
             const i = idxAt++;
             const row = `
             <tr id="at-row-${i}">
+                
                 <td>
+                    <input type="hidden" name="Detalles.Index" value="${i}" />
+                    <input type="hidden" name="Detalles[${i}].IdDetalle" value="0" />
+
                     <select name="Detalles[${i}].TipoItem" class="form-control-vet" style="width:110px"
                             onchange="toggleItemAt(${i}, this.value)">
                         <option value="">—</option>

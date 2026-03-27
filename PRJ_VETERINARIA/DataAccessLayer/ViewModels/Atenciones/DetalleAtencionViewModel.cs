@@ -5,6 +5,8 @@ namespace PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones
 {
     public class DetalleAtencionViewModel
     {
+        public int IdDetalle { get; set; }
+
         // Solo uno de los dos debe venir — producto O servicio
         [Display(Name = "Producto")]
         public int? IdProducto { get; set; }
@@ -20,7 +22,7 @@ namespace PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones
         [Display(Name = "Cantidad")]
         public decimal Cantidad { get; set; } = 1;
 
-        [Range(0.01, 99999.99, ErrorMessage = "El precio debe ser mayor a 0.")]
+        [Range(0.00, 99999.99, ErrorMessage = "El precio debe ser mayor a 0.")]
         [Display(Name = "Precio unitario")]
         public decimal PrecioUnitario { get; set; }
 
