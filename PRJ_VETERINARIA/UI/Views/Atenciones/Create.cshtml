@@ -1,120 +1,282 @@
-@model PRJ_VETERINARIA.DataAccessLayer.Models.Atencion
+@model PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones.AtencionViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nueva atención";
 }
 
-<h1>Create</h1>
-
-<h4>Atencion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="IdMascota" class="control-label"></label>
-                <select asp-for="IdMascota" class ="form-control" asp-items="ViewBag.IdMascota"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdVeterinario" class="control-label"></label>
-                <select asp-for="IdVeterinario" class ="form-control" asp-items="ViewBag.IdVeterinario"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdGrupo" class="control-label"></label>
-                <select asp-for="IdGrupo" class ="form-control" asp-items="ViewBag.IdGrupo"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaHoraFin" class="control-label"></label>
-                <input asp-for="FechaHoraFin" class="form-control" />
-                <span asp-validation-for="FechaHoraFin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoAtencion" class="control-label"></label>
-                <input asp-for="TipoAtencion" class="form-control" />
-                <span asp-validation-for="TipoAtencion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MotivoConsulta" class="control-label"></label>
-                <input asp-for="MotivoConsulta" class="form-control" />
-                <span asp-validation-for="MotivoConsulta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sintomas" class="control-label"></label>
-                <input asp-for="Sintomas" class="form-control" />
-                <span asp-validation-for="Sintomas" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExamenFisico" class="control-label"></label>
-                <input asp-for="ExamenFisico" class="form-control" />
-                <span asp-validation-for="ExamenFisico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Diagnostico" class="control-label"></label>
-                <input asp-for="Diagnostico" class="form-control" />
-                <span asp-validation-for="Diagnostico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tratamiento" class="control-label"></label>
-                <input asp-for="Tratamiento" class="form-control" />
-                <span asp-validation-for="Tratamiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Recomendaciones" class="control-label"></label>
-                <input asp-for="Recomendaciones" class="form-control" />
-                <span asp-validation-for="Recomendaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PesoAtencion" class="control-label"></label>
-                <input asp-for="PesoAtencion" class="form-control" />
-                <span asp-validation-for="PesoAtencion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Temperatura" class="control-label"></label>
-                <input asp-for="Temperatura" class="form-control" />
-                <span asp-validation-for="Temperatura" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FrecuenciaCardiaca" class="control-label"></label>
-                <input asp-for="FrecuenciaCardiaca" class="form-control" />
-                <span asp-validation-for="FrecuenciaCardiaca" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FrecuenciaRespiratoria" class="control-label"></label>
-                <input asp-for="FrecuenciaRespiratoria" class="form-control" />
-                <span asp-validation-for="FrecuenciaRespiratoria" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <input asp-for="Observaciones" class="form-control" />
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedBy" class="control-label"></label>
-                <input asp-for="UpdatedBy" class="form-control" />
-                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1>Nueva atención</h1>
+        <div class="page-sub">Registre la consulta o procedimiento veterinario</div>
     </div>
+    <a asp-action="Index" class="btn-vet btn-ghost-vet">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Create" method="post" id="atencionForm">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alert-vet alert-danger-vet mb-3"
+         style="@(ViewData.ModelState.IsValid ? "display:none" : "")">
+        <i class="bi bi-exclamation-circle"></i>
+        <div>Corrija los errores antes de continuar.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;max-width:1000px;">
+
+        <!-- Panel izquierdo -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+            <!-- Paciente & veterinario -->
+            <div class="vet-card">
+                <div class="vet-card-header">Información general</div>
+                <div class="vet-card-body">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                        <div>
+                            <label class="form-label-vet" asp-for="IdMascota">Mascota *</label>
+                            <select asp-for="IdMascota" asp-items="Model.MascotasDisponibles"
+                                    class="form-control-vet">
+                                <option value="">— Seleccione —</option>
+                            </select>
+                            <span asp-validation-for="IdMascota" class="form-error"></span>
+                        </div>
+                        <div>
+                            <label class="form-label-vet" asp-for="IdVeterinario">Veterinario *</label>
+                            <select asp-for="IdVeterinario" asp-items="Model.VeterinariosDisponibles"
+                                    class="form-control-vet">
+                                <option value="">— Seleccione —</option>
+                            </select>
+                            <span asp-validation-for="IdVeterinario" class="form-error"></span>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                        <div>
+                            <label class="form-label-vet" asp-for="TipoAtencion">Tipo *</label>
+                            <select asp-for="TipoAtencion"
+                                    asp-items="PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones.AtencionViewModel.TiposAtencion"
+                                    class="form-control-vet">
+                                <option value="">— Seleccione —</option>
+                            </select>
+                            <span asp-validation-for="TipoAtencion" class="form-error"></span>
+                        </div>
+                        <div>
+                            <label class="form-label-vet" asp-for="Estado">Estado</label>
+                            <select asp-for="Estado"
+                                    asp-items="PRJ_VETERINARIA.DataAccessLayer.ViewModels.Atenciones.AtencionViewModel.EstadosAtencion"
+                                    class="form-control-vet">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anamnesis -->
+            <div class="vet-card">
+                <div class="vet-card-header">Anamnesis</div>
+                <div class="vet-card-body" style="display:flex;flex-direction:column;gap:12px;">
+                    <div>
+                        <label class="form-label-vet" asp-for="MotivoConsulta">Motivo de consulta *</label>
+                        <textarea asp-for="MotivoConsulta" class="form-control-vet" rows="2"
+                                  placeholder="Describa el motivo..."></textarea>
+                        <span asp-validation-for="MotivoConsulta" class="form-error"></span>
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Sintomas">Síntomas</label>
+                        <textarea asp-for="Sintomas" class="form-control-vet" rows="2"
+                                  placeholder="Síntomas observados..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="ExamenFisico">Examen físico</label>
+                        <textarea asp-for="ExamenFisico" class="form-control-vet" rows="2"
+                                  placeholder="Hallazgos del examen..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Diagnostico">Diagnóstico</label>
+                        <textarea asp-for="Diagnostico" class="form-control-vet" rows="2"
+                                  placeholder="Diagnóstico..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Tratamiento">Tratamiento</label>
+                        <textarea asp-for="Tratamiento" class="form-control-vet" rows="2"
+                                  placeholder="Plan de tratamiento..."></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Recomendaciones">Recomendaciones</label>
+                        <textarea asp-for="Recomendaciones" class="form-control-vet" rows="2"
+                                  placeholder="Indicaciones para el propietario..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel derecho -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+            <!-- Signos vitales -->
+            <div class="vet-card">
+                <div class="vet-card-header">Signos vitales</div>
+                <div class="vet-card-body" style="display:flex;flex-direction:column;gap:10px;">
+                    <div>
+                        <label class="form-label-vet" asp-for="PesoAtencion">Peso (kg)</label>
+                        <input asp-for="PesoAtencion" type="number" step="0.01"
+                               class="form-control-vet mono" placeholder="0.00" />
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Temperatura">Temperatura (°C)</label>
+                        <input asp-for="Temperatura" type="number" step="0.1"
+                               class="form-control-vet mono" placeholder="38.5" />
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="FrecuenciaCardiaca">Frec. cardíaca (bpm)</label>
+                        <input asp-for="FrecuenciaCardiaca" type="number"
+                               class="form-control-vet mono" placeholder="80" />
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="FrecuenciaRespiratoria">Frec. respiratoria (rpm)</label>
+                        <input asp-for="FrecuenciaRespiratoria" type="number"
+                               class="form-control-vet mono" placeholder="20" />
+                    </div>
+                    <div>
+                        <label class="form-label-vet" asp-for="Observaciones">Observaciones</label>
+                        <textarea asp-for="Observaciones" class="form-control-vet" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <button type="submit" class="btn-vet btn-primary-vet">
+                    <i class="bi bi-check-lg"></i> Registrar atención
+                </button>
+                <a asp-action="Index" class="btn-vet btn-ghost-vet" style="text-align:center;">
+                    Cancelar
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Detalle (productos y servicios) -->
+    <div style="max-width:1000px;margin-top:18px;">
+        <div class="vet-card">
+            <div class="vet-card-header">
+                <span>Detalle — productos y servicios</span>
+                <button type="button" class="btn-vet btn-ghost-vet" onclick="agregarDetalleAtencion()" style="padding:4px 10px;font-size:12px;">
+                    <i class="bi bi-plus"></i> Agregar fila
+                </button>
+            </div>
+            <div class="vet-card-body" style="padding:0">
+                <table class="vet-table" id="tablaDetalleAtencion">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Producto / Servicio</th>
+                            <th>Cant.</th>
+                            <th>Precio unit.</th>
+                            <th>Desc. %</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoDetalleAtencion"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Datos JSON para JS -->
+<script id="productosDataAtencion" type="application/json">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.ProductosDisponibles.Select(p => new { value = p.Value, text = p.Text })
+    ))
+</script>
+<script id="serviciosDataAtencion" type="application/json">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.ServiciosDisponibles.Select(s => new { value = s.Value, text = s.Text })
+    ))
+</script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const productosAt = JSON.parse(document.getElementById('productosDataAtencion').textContent);
+        const serviciosAt = JSON.parse(document.getElementById('serviciosDataAtencion').textContent);
+        let idxAt = 0;
+
+        function buildOptsAt(arr) {
+            return arr.map(i => `<option value="${i.value}">${i.text}</option>`).join('');
+        }
+
+        function agregarDetalleAtencion() {
+            const i = idxAt++;
+            const row = `
+            <tr id="at-row-${i}">
+                <td>
+                    <select name="Detalles[${i}].TipoItem" class="form-control-vet" style="width:110px"
+                            onchange="toggleItemAt(${i}, this.value)">
+                        <option value="">—</option>
+                        <option value="PRODUCTO">Producto</option>
+                        <option value="SERVICIO">Servicio</option>
+                    </select>
+                </td>
+                <td id="at-item-${i}">
+                    <span style="color:var(--vet-muted);font-size:12px">Seleccione tipo</span>
+                </td>
+                <td>
+                    <input name="Detalles[${i}].Cantidad" type="number" step="0.01" min="0.01"
+                           value="1" class="form-control-vet mono" style="width:75px"
+                           oninput="calcAt(${i})">
+                </td>
+                <td>
+                    <input name="Detalles[${i}].PrecioUnitario" type="number" step="0.01" min="0"
+                           value="0" class="form-control-vet mono" style="width:90px"
+                           oninput="calcAt(${i})">
+                </td>
+                <td>
+                    <input name="Detalles[${i}].DescuentoPorcentaje" type="number" step="0.01"
+                           min="0" max="100" value="0" class="form-control-vet mono" style="width:70px"
+                           oninput="calcAt(${i})">
+                </td>
+                <td class="mono" style="font-size:12px" id="at-sub-${i}">0.00</td>
+                <td>
+                    <button type="button" class="btn-vet btn-ghost-vet btn-icon"
+                            onclick="quitarFilaAt(${i})"
+                            style="color:var(--vet-danger)">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </td>
+            </tr>`;
+            document.getElementById('cuerpoDetalleAtencion').insertAdjacentHTML('beforeend', row);
+        }
+
+        function toggleItemAt(i, tipo) {
+            const cell = document.getElementById(`at-item-${i}`);
+            if (tipo === 'PRODUCTO') {
+                cell.innerHTML = `<select name="Detalles[${i}].IdProducto" class="form-control-vet">
+                    <option value="">—</option>${buildOptsAt(productosAt)}</select>`;
+            } else if (tipo === 'SERVICIO') {
+                cell.innerHTML = `<select name="Detalles[${i}].IdServicio" class="form-control-vet">
+                    <option value="">—</option>${buildOptsAt(serviciosAt)}</select>`;
+            } else {
+                cell.innerHTML = `<span style="color:var(--vet-muted);font-size:12px">Seleccione tipo</span>`;
+            }
+        }
+
+        function calcAt(i) {
+            const cant  = parseFloat(document.querySelector(`[name="Detalles[${i}].Cantidad"]`)?.value) || 0;
+            const precio= parseFloat(document.querySelector(`[name="Detalles[${i}].PrecioUnitario"]`)?.value) || 0;
+            const desc  = parseFloat(document.querySelector(`[name="Detalles[${i}].DescuentoPorcentaje"]`)?.value) || 0;
+            const sub   = cant * precio * (1 - desc / 100);
+            document.getElementById(`at-sub-${i}`).textContent = sub.toFixed(2);
+        }
+
+        function quitarFilaAt(i) {
+            document.getElementById(`at-row-${i}`)?.remove();
+        }
+
+        // Start with one row
+        agregarDetalleAtencion();
+    </script>
 }

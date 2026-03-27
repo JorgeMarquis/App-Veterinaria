@@ -5,7 +5,14 @@ using PRJ_VETERINARIA.DataAccessLayer.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        // Include the UI/Views folders in the search locations so views placed under UI/Views
+        // (like UI/Views/Account/Login.cshtml) are found by the view engine.
+        options.ViewLocationFormats.Add("/UI/Views/{1}/{0}.cshtml");
+        options.ViewLocationFormats.Add("/UI/Views/Shared/{0}.cshtml");
+    });
 
 // DB
 builder.Services.AddDbContext<BDVeterinariaContext>(options =>

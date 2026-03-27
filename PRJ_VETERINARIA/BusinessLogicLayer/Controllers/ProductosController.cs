@@ -158,6 +158,10 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                 UnidadMedida = producto.UnidadMedida,
                 RequiereReceta = producto.RequiereReceta,
                 Activo = producto.Activo
+                ,CreatedAt = producto.CreatedAt
+                ,CreatedBy = producto.CreatedBy
+                ,UpdatedAt = producto.UpdatedAt
+                ,UpdatedBy = producto.UpdatedBy
             };
 
             await LlenarListasViewModel(vm);

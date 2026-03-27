@@ -56,6 +56,12 @@ namespace PRJ_VETERINARIA.DataAccessLayer.ViewModels.Productos
         [Display(Name = "Activo")]
         public bool Activo { get; set; } = true;
 
+        // Auditoría
+        public DateTime CreatedAt { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string? UpdatedBy { get; set; }
+
         public IEnumerable<SelectListItem> CategoriasDisponibles { get; set; }
             = Enumerable.Empty<SelectListItem>();
 

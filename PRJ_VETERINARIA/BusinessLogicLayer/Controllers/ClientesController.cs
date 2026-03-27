@@ -47,7 +47,7 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
         public IActionResult Create()
         {
             ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-            return View(new ClienteViewModel());
+            return View("Createedit", new ClienteViewModel());
         }
 
         
@@ -58,7 +58,7 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-                return View(clientevm);
+                return View("Createedit", clientevm);
             }
 
             var cliente = new Cliente
@@ -99,7 +99,7 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                 }
 
                 ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-                return View(clientevm);
+                return View("Createedit", clientevm);
             }
         }
 
@@ -126,10 +126,12 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                 TelefonoEmergencia = cliente.TelefonoEmergencia,
                 Observaciones = cliente.Observaciones,
                 Activo = cliente.Activo
+                ,CreatedAt = cliente.CreatedAt
+                ,UpdatedAt = cliente.UpdatedAt
             };
 
             ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-            return View(vm);
+            return View("Createedit", vm);
         }
 
         // POST: Clientes/Edit/5
@@ -141,7 +143,7 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-                return View(clientevm);
+                return View("Createedit", clientevm);
             }
 
             var cliente = await _context.Clientes.FindAsync(clientevm.IdCliente);
@@ -186,7 +188,7 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
                 }
 
                 ViewBag.TiposIdentificacion = ClienteViewModel.TiposIdentificacion;
-                return View(clientevm);
+                return View("Createedit", clientevm);
             }
         }
 

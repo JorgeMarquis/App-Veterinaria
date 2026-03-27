@@ -68,5 +68,9 @@ namespace PRJ_VETERINARIA.DataAccessLayer.ViewModels.Clientes
             "Carnet de Extranjería",
             "Pasaporte"
         };
+
+        // Auditoría
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

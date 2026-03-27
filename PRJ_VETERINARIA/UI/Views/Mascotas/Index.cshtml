@@ -1,80 +1,109 @@
 @model IEnumerable<PRJ_VETERINARIA.DataAccessLayer.Models.Mascota>
 
 @{
-    ViewData["Title"] = "Lista de Mascotas";
+    ViewData["Title"] = "Mascotas";
 }
 
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>
-                <i class="bi bi-paw-fill"></i> Mascotas Registradas
-            </h2>
-        </div>
-        <div class="col-auto">
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Registrar Nueva Mascota
-            </a>
-        </div>
+<div class="page-header">
+    <div>
+        <h1>Mascotas</h1>
+        <div class="page-sub">@Model.Count() pacientes activos</div>
     </div>
+    <a asp-action="Create" class="btn-vet btn-primary-vet">
+        <i class="bi bi-plus"></i> Nueva mascota
+    </a>
+</div>
 
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-primary">
+<div style="margin-bottom:16px;">
+    <input type="text" id="searchInput" class="form-control-vet"
+           placeholder="Buscar por nombre, cliente, especie o raza..."
+           style="max-width:380px;">
+</div>
+
+<div class="vet-card">
+    <div class="vet-card-body" style="padding:0">
+        <table class="vet-table" id="mascotasTable">
+            <thead>
+                <tr>
+                    <th>Mascota</th>
+                    <th>Cliente</th>
+                    <th>Especie / Raza</th>
+                    <th>Sexo</th>
+                    <th>Microchip</th>
+                    <th style="text-align:right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
                     <tr>
-                        <th><i class="bi bi-paw-fill"></i> Nombre</th>
-                        <th><i class="bi bi-person-fill"></i> Cliente</th>
-                        <th><i class="bi bi-tags-fill"></i> Especie</th>
-                        <th><i class="bi bi-bookmark-fill"></i> Raza</th>
-                        <th><i class="bi bi-venus-mars"></i> Sexo</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var mascota in Model)
-                    {
-                        <tr>
-                            <td class="fw-bold">@mascota.Nombre</td>
-                            <td>@mascota.IdClienteNavigation?.NombreCompleto</td>
-                            <td>@mascota.IdEspecieNavigation?.Nombre</td>
-                            <td>@mascota.IdRazaNavigation?.Nombre</td>
-                            <td>
-                                @if (mascota.Sexo == "M")
-                                {
-                                    <span class="badge bg-info">Macho</span>
-                                }
-                                else if (mascota.Sexo == "H")
-                                {
-                                    <span class="badge bg-warning">Hembra</span>
-                                }
-                                else
-                                {
-                                    <span>@mascota.Sexo</span>
-                                }
-                            </td>
-                            <td class="text-center">
-                                <a asp-action="Details" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-info" title="Ver">
+                        <td>
+                            <div style="font-weight:500">@m.Nombre</div>
+                            @if (m.FechaNacimiento.HasValue)
+                            {
+                                <div style="font-size:12px;color:var(--vet-muted)">
+                                    Nac: @m.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                                </div>
+                            }
+                        </td>
+                        <td>@m.IdClienteNavigation?.NombreCompleto</td>
+                        <td>
+                            <span>@m.IdEspecieNavigation?.Nombre</span>
+                            @if (m.IdRazaNavigation != null)
+                            {
+                                <span style="color:var(--vet-muted)"> / @m.IdRazaNavigation.Nombre</span>
+                            }
+                        </td>
+                        <td>
+                            @if (m.Sexo == "M")
+                            {
+                                <span class="badge-vet badge-blue">Macho</span>
+                            }
+                            else
+                            {
+                                <span class="badge-vet badge-yellow">Hembra</span>
+                            }
+                        </td>
+                        <td class="mono" style="font-size:12px">
+                            @(string.IsNullOrEmpty(m.MicrochipId) ? "—" : m.MicrochipId)
+                        </td>
+                        <td style="text-align:right">
+                            <div style="display:flex;gap:4px;justify-content:flex-end">
+                                <a asp-action="Details" asp-route-id="@m.IdMascota"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Ver">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a asp-action="Edit" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-warning" title="Editar">
+                                <a asp-action="Edit" asp-route-id="@m.IdMascota"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@mascota.IdMascota" class="btn btn-sm btn-danger" title="Eliminar">
+                                <form asp-action="Delete" asp-route-id="@m.IdMascota"
+                                      method="post" id="del-mas-@m.IdMascota" style="display:none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <button type="button"
+                                        class="btn-vet btn-ghost-vet btn-icon"
+                                        onclick="confirmDelete('del-mas-@m.IdMascota')"
+                                        title="Eliminar"
+                                        style="color:var(--vet-danger);border-color:transparent">
                                     <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle"></i> No hay mascotas registradas aún.
-        </div>
-    }
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#mascotasTable tbody tr').forEach(r => {
+                r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}
