@@ -24,6 +24,14 @@ namespace PRJ_VETERINARIA.BusinessLogicLayer.Controllers
         {
             var tiposServicio = await _context.TipoServicios
                 .OrderBy(t => t.Nombre)
+                .Select(t => new TipoServicioViewModel
+                {
+                    IdTipoServicio = t.IdTipoServicio,
+                    Nombre = t.Nombre,
+                    EsMedico = t.EsMedico,
+                    DuracionEstimadaMin = t.DuracionEstimadaMin,
+                    Activo = t.Activo
+                })
                 .ToListAsync();
 
             return View(tiposServicio);

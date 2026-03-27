@@ -17,9 +17,9 @@
             --vet-bg:        #F7F7F5;
             --vet-surface:   #FFFFFF;
             --vet-border:    #E4E4DF;
-            --vet-text:      #1A1A18;
+            --vet-text:      #1f2937;
             --vet-muted:     #7A7A72;
-            --vet-accent:    #2D6A4F;
+            --vet-accent:    #0a5c4a;
             --vet-accent-lt: #E8F4EE;
             --vet-danger:    #C0392B;
             --vet-warning:   #D4860A;
@@ -32,7 +32,7 @@
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
             background: var(--vet-bg);
             color: var(--vet-text);
             font-size: 14px;
@@ -623,50 +623,61 @@
     </main>
 </div>
 
-<!-- Confirm delete modal (global) -->
-<div class="vet-overlay" id="confirmOverlay">
-    <div class="vet-modal">
-        <h3><i class="bi bi-exclamation-triangle" style="color:var(--vet-warning)"></i> Confirmar eliminación</h3>
-        <p>Esta acción no se puede deshacer. ¿Desea continuar?</p>
-        <div style="display:flex;gap:8px;justify-content:flex-end">
-            <button class="btn-vet btn-ghost-vet" onclick="closeConfirm()">Cancelar</button>
-            <button class="btn-vet btn-danger-vet" id="confirmBtn">Eliminar</button>
+
+
+    <!-- Confirm delete modal (global) -->
+    <div class="vet-overlay" id="confirmOverlay">
+        <div class="vet-modal">
+            <h3><i class="bi bi-exclamation-triangle" style="color:var(--vet-warning)"></i> Confirmar eliminación</h3>
+            <p>Esta acción no se puede deshacer. ¿Desea continuar?</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button class="btn-vet btn-ghost-vet" onclick="closeConfirm()">Cancelar</button>
+                <button class="btn-vet btn-danger-vet" id="confirmBtn">Eliminar</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Modal de confirmación global (nuevo) -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">¿Eliminar registro?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">Esta acción no se puede deshacer.</div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="confirmDeleteBtn" type="button" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
 
-<script>
-    // ── Global confirm delete modal ──────────────
-    let _confirmForm = null;
+    <script>
+        // Confirmación de eliminación (funciona en todas las vistas)
+        let deleteUrl = '';
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                deleteUrl = this.getAttribute('data-url');
+                new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            });
+        });
 
-    function confirmDelete(formId) {
-        _confirmForm = document.getElementById(formId);
-        document.getElementById('confirmOverlay').classList.add('show');
-    }
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            if (deleteUrl) window.location.href = deleteUrl;
+        });
 
-    function closeConfirm() {
-        document.getElementById('confirmOverlay').classList.remove('show');
-        _confirmForm = null;
-    }
-
-    document.getElementById('confirmBtn').addEventListener('click', () => {
-        if (_confirmForm) _confirmForm.submit();
-    });
-
-    document.getElementById('confirmOverlay').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeConfirm();
-    });
-
-    // ── Active nav highlight (fallback) ─────────
-    document.querySelectorAll('.nav-link-item[href]').forEach(el => {
-        if (el.href === window.location.href) el.classList.add('active');
-    });
-</script>
+        // Toast auto-hide
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) setTimeout(() => toastEl.remove(), 4000);
+    </script>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>
