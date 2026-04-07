@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — VetSystem</title>
+    <script type="importmap"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        :root {
+            --vet-bg:        #F7F7F5;
+            --vet-surface:   #FFFFFF;
+            --vet-border:    #E4E4DF;
+            --vet-text:      #1f2937;
+            --vet-muted:     #7A7A72;
+            --vet-accent:    #0a5c4a;
+            --vet-accent-lt: #E8F4EE;
+            --vet-danger:    #C0392B;
+            --vet-warning:   #D4860A;
+            --vet-info:      #1A6FA8;
+            --vet-sidebar:   220px;
+            --vet-radius:    6px;
+            --vet-mono:      'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            background: var(--vet-bg);
+            color: var(--vet-text);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ── Sidebar ──────────────────────────────── */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--vet-sidebar);
+            height: 100vh;
+            background: var(--vet-surface);
+            border-right: 1px solid var(--vet-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 18px 16px;
+            border-bottom: 1px solid var(--vet-border);
+            text-decoration: none;
+            color: var(--vet-text);
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 32px; height: 32px;
+            background: var(--vet-accent);
+            border-radius: var(--vet-radius);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand .brand-name {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .sidebar-brand .brand-sub {
+            font-size: 10px;
+            color: var(--vet-muted);
+            font-family: var(--vet-mono);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-section {
+            padding: 16px 12px 4px;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--vet-muted);
+            padding: 0 6px;
+            margin-bottom: 4px;
+        }
+
+        .nav-link-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 7px 8px;
+            border-radius: var(--vet-radius);
+            color: var(--vet-muted);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 400;
+            transition: background 0.12s, color 0.12s;
+            cursor: pointer;
+        }
+
+        .nav-link-item:hover,
+        .nav-link-item.active {
+            background: var(--vet-accent-lt);
+            color: var(--vet-accent);
+        }
+
+        .nav-link-item i { font-size: 14px; width: 16px; text-align: center; }
+
+        /* collapsible sub-menu */
+        .nav-sub { padding-left: 26px; }
+
+        .nav-sub .nav-link-item {
+            font-size: 13px;
+            padding: 5px 8px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 14px 12px;
+            border-top: 1px solid var(--vet-border);
+        }
+
+        .user-chip {
+            display: flex; align-items: center; gap: 9px;
+            padding: 8px 10px;
+            border-radius: var(--vet-radius);
+            background: var(--vet-bg);
+        }
+
+        .user-avatar {
+            width: 28px; height: 28px;
+            background: var(--vet-accent);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .user-name { font-size: 12.5px; font-weight: 500; }
+        .user-role { font-size: 10.5px; color: var(--vet-muted); }
+
+        .btn-logout {
+            display: flex; align-items: center; gap: 6px;
+            width: 100%; margin-top: 8px;
+            padding: 6px 10px;
+            background: none;
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+            color: var(--vet-muted);
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: border-color 0.12s, color 0.12s;
+        }
+
+        .btn-logout:hover { border-color: var(--vet-danger); color: var(--vet-danger); }
+
+        /* ── Main content ─────────────────────────── */
+        #main {
+            margin-left: var(--vet-sidebar);
+            min-height: 100vh;
+            padding: 32px 36px;
+        }
+
+        /* ── Page header ──────────────────────────── */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin: 0;
+        }
+
+        .page-header .page-sub {
+            font-size: 13px;
+            color: var(--vet-muted);
+            margin-top: 2px;
+        }
+
+        /* ── Cards ────────────────────────────────── */
+        .vet-card {
+            background: var(--vet-surface);
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+        }
+
+        .vet-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--vet-border);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .vet-card-body { padding: 18px; }
+
+        /* ── Tables ───────────────────────────────── */
+        .vet-table { width: 100%; border-collapse: collapse; }
+
+        .vet-table th {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--vet-muted);
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--vet-border);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .vet-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--vet-border);
+            font-size: 13.5px;
+            vertical-align: middle;
+        }
+
+        .vet-table tbody tr:last-child td { border-bottom: none; }
+
+        .vet-table tbody tr:hover td { background: #FAFAF8; }
+
+        /* ── Buttons ──────────────────────────────── */
+        .btn-vet {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--vet-radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: opacity 0.12s, background 0.12s;
+            text-decoration: none;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-vet:hover { opacity: 0.88; }
+
+        .btn-primary-vet {
+            background: var(--vet-accent);
+            color: #fff;
+            border-color: var(--vet-accent);
+        }
+
+        .btn-ghost-vet {
+            background: transparent;
+            color: var(--vet-muted);
+            border-color: var(--vet-border);
+        }
+
+        .btn-ghost-vet:hover { color: var(--vet-text); border-color: #ccc; opacity: 1; }
+
+        .btn-danger-vet {
+            background: var(--vet-danger);
+            color: #fff;
+            border-color: var(--vet-danger);
+        }
+
+        .btn-icon {
+            padding: 5px 8px;
+            font-size: 13px;
+        }
+
+        /* ── Badges ───────────────────────────────── */
+        .badge-vet {
+            display: inline-flex; align-items: center;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: var(--vet-mono);
+        }
+
+        .badge-green  { background: #D4EDDA; color: #155724; }
+        .badge-red    { background: #F8D7DA; color: #721C24; }
+        .badge-yellow { background: #FFF3CD; color: #856404; }
+        .badge-blue   { background: #D1ECF1; color: #0C5460; }
+        .badge-gray   { background: #E9E9E3; color: #495057; }
+
+        /* ── Forms ────────────────────────────────── */
+        .form-label-vet {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--vet-muted);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-control-vet {
+            width: 100%;
+            padding: 8px 11px;
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+            font-size: 13.5px;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--vet-surface);
+            color: var(--vet-text);
+            transition: border-color 0.12s;
+        }
+
+        .form-control-vet:focus {
+            outline: none;
+            border-color: var(--vet-accent);
+        }
+
+        .form-control-vet.is-invalid { border-color: var(--vet-danger); }
+
+        .form-error {
+            font-size: 11.5px;
+            color: var(--vet-danger);
+            margin-top: 3px;
+        }
+
+        .form-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--vet-muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--vet-border);
+            margin-bottom: 16px;
+        }
+
+        /* ── Alert ────────────────────────────────── */
+        .alert-vet {
+            padding: 12px 14px;
+            border-radius: var(--vet-radius);
+            font-size: 13px;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+
+        .alert-danger-vet {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #7F1D1D;
+        }
+
+        .alert-warning-vet {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            color: #78350F;
+        }
+
+        /* ── Stat cards ───────────────────────────── */
+        .stat-card {
+            background: var(--vet-surface);
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+            padding: 20px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--vet-muted);
+        }
+
+        .stat-card .stat-value {
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-top: 4px;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 18px;
+            color: var(--vet-accent);
+            opacity: 0.6;
+        }
+
+        /* ── Responsive ───────────────────────────── */
+        @@media (max-width: 768px) {
+            #sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+            #sidebar.open { transform: translateX(0); }
+            #main { margin-left: 0; padding: 20px 16px; }
+            .mobile-menu-btn { display: block !important; }
+        }
+
+        /* ── Misc ─────────────────────────────────── */
+        .divider { border: none; border-top: 1px solid var(--vet-border); margin: 16px 0; }
+        .text-muted-vet { color: var(--vet-muted); }
+        .mono { font-family: var(--vet-mono); }
+
+        /* Animate page content */
+        #main { animation: fadeInUp 0.25s ease; }
+        @@keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notification */
+        .vet-toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+
+        /* Modal confirm overlay */
+        .vet-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.15s;
+        }
+
+        .vet-overlay.show { opacity: 1; pointer-events: all; }
+
+        .vet-modal {
+            background: var(--vet-surface);
+            border: 1px solid var(--vet-border);
+            border-radius: 8px;
+            padding: 24px;
+            width: min(420px, 90vw);
+            transform: scale(0.95); transition: transform 0.15s;
+        }
+
+        .vet-overlay.show .vet-modal { transform: scale(1); }
+
+        .vet-modal h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+        .vet-modal p  { font-size: 13.5px; color: var(--vet-muted); margin: 0 0 20px; }
+    </style>
+</head>
+<body>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <a class="sidebar-brand" asp-controller="Dashboard" asp-action="Index">
+            <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+            <div>
+                <div class="brand-name">VetSystem</div>
+                <div class="brand-sub">v2.0</div>
+            </div>
+        </a>
+
+        <!-- PRINCIPAL -->
+        <div class="nav-section">
+            <div class="nav-section-label">Principal</div>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-controller="Dashboard" asp-action="Index">
+                <i class="bi bi-grid-1x2"></i> Dashboard
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Clientes" ? "active" : "")"
+               asp-controller="Clientes" asp-action="Index">
+                <i class="bi bi-people"></i> Clientes
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Mascotas" ? "active" : "")"
+               asp-controller="Mascotas" asp-action="Index">
+                <i class="bi bi-github"></i> Mascotas
+            </a>
+        </div>
+
+        <!-- CLÍNICA -->
+        <div class="nav-section">
+            <div class="nav-section-label">Clínica</div>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Atenciones" ? "active" : "")"
+               asp-controller="Atenciones" asp-action="Index">
+                <i class="bi bi-clipboard2-pulse"></i> Atenciones
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "HistorialVacunas" ? "active" : "")"
+               asp-controller="HistorialVacunas" asp-action="Index">
+                <i class="bi bi-shield-check"></i> Vacunas
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Desparasitaciones" ? "active" : "")"
+               asp-controller="Desparasitaciones" asp-action="Index">
+                <i class="bi bi-bug"></i> Desparasitaciones
+            </a>
+        </div>
+
+        <!-- INVENTARIO -->
+        <div class="nav-section">
+            <div class="nav-section-label">Inventario</div>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Productos" ? "active" : "")"
+               asp-controller="Productos" asp-action="Index">
+                <i class="bi bi-box-seam"></i> Productos
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "LoteProductos" ? "active" : "")"
+               asp-controller="LoteProductos" asp-action="Index">
+                <i class="bi bi-layers"></i> Lotes
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Kardexs" ? "active" : "")"
+               asp-controller="Kardexs" asp-action="Index">
+                <i class="bi bi-bar-chart-steps"></i> Kardex
+            </a>
+        </div>
+
+        <!-- VENTAS & COMPRAS -->
+        <div class="nav-section">
+            <div class="nav-section-label">Comercial</div>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Ventas" ? "active" : "")"
+               asp-controller="Ventas" asp-action="Index">
+                <i class="bi bi-receipt"></i> Ventas
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Compras" ? "active" : "")"
+               asp-controller="Compras" asp-action="Index">
+                <i class="bi bi-truck"></i> Compras
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Proveedores" ? "active" : "")"
+               asp-controller="Proveedores" asp-action="Index">
+                <i class="bi bi-building"></i> Proveedores
+            </a>
+        </div>
+
+        <!-- CATÁLOGOS -->
+        <div class="nav-section">
+            <div class="nav-section-label">Catálogos</div>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Especies" ? "active" : "")"
+               asp-controller="Especies" asp-action="Index">
+                <i class="bi bi-collection"></i> Especies
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Razas" ? "active" : "")"
+               asp-controller="Razas" asp-action="Index">
+                <i class="bi bi-tags"></i> Razas
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vacunas" ? "active" : "")"
+               asp-controller="Vacunas" asp-action="Index">
+                <i class="bi bi-droplet"></i> Cat. Vacunas
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Servicios" ? "active" : "")"
+               asp-controller="Servicios" asp-action="Index">
+                <i class="bi bi-tools"></i> Servicios
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "TipoServicios" ? "active" : "")"
+               asp-controller="TipoServicios" asp-action="Index">
+                <i class="bi bi-list-check"></i> Tipo Servicios
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FormaPagos" ? "active" : "")"
+               asp-controller="FormaPagos" asp-action="Index">
+                <i class="bi bi-credit-card"></i> Formas de Pago
+            </a>
+            <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "CategoriaProductos" ? "active" : "")"
+               asp-controller="CategoriaProductos" asp-action="Index">
+                <i class="bi bi-folder"></i> Cat. Productos
+            </a>
+        </div>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("Administrador"))
+        {
+            <div class="nav-section">
+                <div class="nav-section-label">Administración</div>
+                <a class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Usuarios" ? "active" : "")"
+                   asp-controller="Usuarios" asp-action="Index">
+                    <i class="bi bi-person-gear"></i> Usuarios
+                </a>
+            </div>
+        }
+
+        <!-- Footer user block -->
+        <div class="sidebar-footer">
+            <div class="user-chip">
+                <div class="user-avatar">
+                    @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                </div>
+                <div>
+                    <div class="user-name">@User.Identity?.Name</div>
+                    <div class="user-role">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</div>
+                </div>
+            </div>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </nav>
+}
+
+<!-- Main -->
+<div id="main" class="@(User.Identity == null || !User.Identity.IsAuthenticated ? "ms-0" : "")">
+    @if (TempData["Success"] != null)
+    {
+        <div id="toast-success" style="
+            position:fixed;top:20px;right:20px;z-index:9999;
+            background:#D1FAE5;border:1px solid #6EE7B7;
+            border-radius:6px;padding:12px 16px;
+            font-size:13px;color:#065F46;
+            display:flex;gap:8px;align-items:center;
+            animation:fadeInUp 0.2s ease;">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+        </div>
+        <script>
+            setTimeout(() => document.getElementById('toast-success')?.remove(), 3500);
+        </script>
+    }
+
+    <main role="main">
+        @RenderBody()
+    </main>
+</div>
+
+
+
+    <!-- Confirm delete modal (global) -->
+    <div class="vet-overlay" id="confirmOverlay">
+        <div class="vet-modal">
+            <h3><i class="bi bi-exclamation-triangle" style="color:var(--vet-warning)"></i> Confirmar eliminación</h3>
+            <p>Esta acción no se puede deshacer. ¿Desea continuar?</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button class="btn-vet btn-ghost-vet" onclick="closeConfirm()">Cancelar</button>
+                <button class="btn-vet btn-danger-vet" id="confirmBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación global (nuevo) -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">¿Eliminar registro?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">Esta acción no se puede deshacer.</div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="confirmDeleteBtn" type="button" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Variable para almacenar el ID del formulario a enviar
+        let targetFormId = '';
+
+        // Esta es la función que llamarán los botones de eliminar en tus vistas
+        function confirmDelete(formId) {
+            targetFormId = formId;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        // Al confirmar, ejecutamos el submit() del formulario seguro, NO un redirect
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            if (targetFormId) {
+                document.getElementById(targetFormId).submit();
+            }
+        });
+    </script>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,121 @@
+@model IEnumerable<Veterinaria.Domain.Entities.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Productos</h1>
+        <div class="page-sub">@Model.Count() productos activos en catálogo</div>
+    </div>
+    <a asp-action="Create" class="btn-vet btn-primary-vet">
+        <i class="bi bi-plus"></i> Nuevo producto
+    </a>
+</div>
+
+<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" id="searchInput" class="form-control-vet"
+           placeholder="Buscar producto..." style="max-width:280px;">
+    <select id="filterTipo" class="form-control-vet" style="width:160px;">
+        <option value="">Todos los tipos</option>
+        <option>Medicamento</option>
+        <option>Alimento</option>
+        <option>Accesorio</option>
+        <option>Higiene</option>
+        <option>Suplemento</option>
+        <option>Otro</option>
+    </select>
+</div>
+
+<div class="vet-card">
+    <div class="vet-card-body" style="padding:0">
+        <table class="vet-table" id="productosTable">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Tipo</th>
+                    <th style="text-align:right">P. Costo</th>
+                    <th style="text-align:right">P. Venta</th>
+                    <th>Receta</th>
+                    <th style="text-align:right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr data-tipo="@p.TipoProducto">
+                        <td class="mono" style="font-size:12px">@p.CodigoInterno</td>
+                        <td>
+                            <div style="font-weight:500">@p.Nombre</div>
+                            @if (!string.IsNullOrEmpty(p.Descripcion))
+                            {
+                                <div style="font-size:12px;color:var(--vet-muted)">
+                                    @(p.Descripcion.Length > 50 ? p.Descripcion[..50] + "…" : p.Descripcion)
+                                </div>
+                            }
+                        </td>
+                        <td>@p.IdCategoriaNavigation?.Nombre</td>
+                        <td><span class="badge-vet badge-gray">@p.TipoProducto</span></td>
+                        <td style="text-align:right" class="mono">S/ @p.PrecioCosto.ToString("N2")</td>
+                        <td style="text-align:right" class="mono">
+                            <strong>S/ @p.PrecioVenta.ToString("N2")</strong>
+                        </td>
+                        <td>
+                            @if (p.RequiereReceta)
+                            {
+                                <span class="badge-vet badge-yellow">Sí</span>
+                            }
+                            else
+                            {
+                                <span style="color:var(--vet-muted);font-size:12px">No</span>
+                            }
+                        </td>
+                        <td style="text-align:right">
+                            <div style="display:flex;gap:4px;justify-content:flex-end">
+                                <a asp-action="Edit" asp-route-id="@p.IdProducto"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="@Url.Action("GenerarImagenCodigoBarras", "Productos", new { codigoAlfanumerico = p.CodigoBarras })"
+                                       target="_blank"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Ver código de barras">
+                                    <i class="bi bi-upc-scan"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@p.IdProducto"
+                                      method="post" id="del-prod-@p.IdProducto" style="display:none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <button type="button"
+                                        class="btn-vet btn-ghost-vet btn-icon"
+                                        onclick="confirmDelete('del-prod-@p.IdProducto')"
+                                        title="Eliminar"
+                                        style="color:var(--vet-danger);border-color:transparent">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applyFilter() {
+            const q    = document.getElementById('searchInput').value.toLowerCase();
+            const tipo = document.getElementById('filterTipo').value;
+            document.querySelectorAll('#productosTable tbody tr').forEach(r => {
+                const matchQ = r.textContent.toLowerCase().includes(q);
+                const matchT = !tipo || r.dataset.tipo === tipo;
+                r.style.display = (matchQ && matchT) ? '' : 'none';
+            });
+        }
+        document.getElementById('searchInput').addEventListener('input', applyFilter);
+        document.getElementById('filterTipo').addEventListener('change', applyFilter);
+    </script>
+}

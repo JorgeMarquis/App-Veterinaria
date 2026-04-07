@@ -1,0 +1,103 @@
+@model Veterinaria.Web.ViewModels.Dashboard.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <div class="page-sub">Resumen operativo — @DateTime.Now.ToString("dddd, dd MMMM yyyy")</div>
+    </div>
+</div>
+
+<!-- Stats grid -->
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px;">
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Clientes</div>
+            <i class="bi bi-people stat-icon"></i>
+        </div>
+        <div class="stat-value">@Model.TotalClientes</div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Mascotas</div>
+            <i class="bi bi-github stat-icon"></i>
+        </div>
+        <div class="stat-value">@Model.TotalMascotas</div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Productos</div>
+            <i class="bi bi-box-seam stat-icon"></i>
+        </div>
+        <div class="stat-value">@Model.TotalProductos</div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Usuarios activos</div>
+            <i class="bi bi-person-check stat-icon"></i>
+        </div>
+        <div class="stat-value">@Model.TotalUsuariosActivos</div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="stat-label">Vacunas reg.</div>
+            <i class="bi bi-droplet stat-icon"></i>
+        </div>
+        <div class="stat-value">@Model.TotalVacunas</div>
+    </div>
+</div>
+
+<!-- Quick actions + info -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div class="vet-card">
+        <div class="vet-card-header">
+            <span>Accesos rápidos</span>
+        </div>
+        <div class="vet-card-body" style="display:flex;flex-direction:column;gap:8px;">
+            <a asp-controller="Clientes" asp-action="Create" class="nav-link-item" style="font-size:13.5px;">
+                <i class="bi bi-person-plus"></i> Nuevo cliente
+            </a>
+            <a asp-controller="Mascotas" asp-action="Create" class="nav-link-item" style="font-size:13.5px;">
+                <i class="bi bi-plus-circle"></i> Registrar mascota
+            </a>
+            <a asp-controller="Atenciones" asp-action="Create" class="nav-link-item" style="font-size:13.5px;">
+                <i class="bi bi-clipboard2-plus"></i> Nueva atención
+            </a>
+            <a asp-controller="Ventas" asp-action="Create" class="nav-link-item" style="font-size:13.5px;">
+                <i class="bi bi-receipt"></i> Nueva venta
+            </a>
+            <a asp-controller="Compras" asp-action="Create" class="nav-link-item" style="font-size:13.5px;">
+                <i class="bi bi-truck"></i> Registrar compra
+            </a>
+        </div>
+    </div>
+
+    <div class="vet-card">
+        <div class="vet-card-header">
+            <span>Sesión actual</span>
+        </div>
+        <div class="vet-card-body">
+            <table style="width:100%;font-size:13px;">
+                <tr>
+                    <td style="color:var(--vet-muted);padding:5px 0;width:40%">Usuario</td>
+                    <td style="font-weight:500">@User.Identity?.Name</td>
+                </tr>
+                <tr>
+                    <td style="color:var(--vet-muted);padding:5px 0">Rol</td>
+                    <td>
+                        <span class="badge-vet badge-green">
+                            @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color:var(--vet-muted);padding:5px 0">Fecha</td>
+                    <td class="mono" style="font-size:12px">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

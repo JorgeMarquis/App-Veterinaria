@@ -1,3 +1,7 @@
 <Solution>
-  <Project Path="PRJ_VETERINARIA/PRJ_VETERINARIA.csproj" />
+  <Project Path="src/Veterinaria.Application/Veterinaria.Application.csproj" />
+  <Project Path="src/Veterinaria.Domain/Veterinaria.Domain.csproj" />
+  <Project Path="src/Veterinaria.Infrastructure/Veterinaria.Infrastructure.csproj" />
+  <Project Path="src/Veterinaria.Web/Veterinaria.Web.csproj" />
+  <Project Path="Veterinaria.API/Veterinaria.API.csproj" Id="6ca0e497-aa25-4266-a0f5-e4c42c86349a" />
 </Solution>

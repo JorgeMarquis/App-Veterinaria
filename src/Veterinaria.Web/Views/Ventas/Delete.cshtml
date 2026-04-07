@@ -1,0 +1,141 @@
+@model Veterinaria.Domain.Entities.Venta
+
+@{
+    ViewData["Title"] = "Eliminar Venta";
+}
+
+<div class="container mt-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Eliminar Venta</h2>
+            <span class="text-muted">Confirmar eliminación</span>
+        </div>
+    </div>
+
+    <!-- Alerta de confirmación -->
+    <div class="alert alert-warning d-flex align-items-start" role="alert">
+        <i class="bi bi-exclamation-triangle me-3 fs-5"></i>
+        <div>
+            <h5 class="alert-heading">¿Está seguro?</h5>
+            <p class="mb-0">Esta acción eliminará permanentemente la venta registrada. Este cambio no se puede deshacer.</p>
+        </div>
+    </div>
+
+    <!-- Card con detalles -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-light border-bottom">
+            <h5 class="mb-0">Detalles de la Venta</h5>
+        </div>
+        <div class="card-body">
+            <!-- Información General -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Fecha</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Fecha)</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Número de Comprobante</h6>
+                    <p class="fw-semibold">@(string.IsNullOrEmpty(Model.NumeroComprobante) ? "-" : Model.NumeroComprobante)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Datos de Clientes y Relacionados -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Cliente</h6>
+                    <p class="fw-semibold">@(Model.IdClienteNavigation == null ? "-" : Model.IdClienteNavigation.IdCliente.ToString())</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Atención</h6>
+                    <p class="fw-semibold">@(Model.IdAtencionNavigation == null ? "-" : Model.IdAtencionNavigation.IdAtencion.ToString())</p>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-muted small mb-2">Forma de Pago</h6>
+                    <p class="fw-semibold">@(Model.IdFormaPagoNavigation == null ? "-" : Model.IdFormaPagoNavigation.IdFormaPago.ToString())</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Montos -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Subtotal</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Subtotal)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Descuento</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Descuento)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Impuestos</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.Impuestos)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Total</h6>
+                    <p class="fw-semibold fs-5">@Html.DisplayFor(model => model.Total)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Estado y Documento -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Estado de Pago</h6>
+                    <p class="fw-semibold">@Html.DisplayFor(model => model.EstadoPago)</p>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">Ruta PDF</h6>
+                    <p>@(string.IsNullOrEmpty(Model.RutaPdf) ? "-" : Model.RutaPdf)</p>
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h6 class="text-muted small mb-2">Observaciones</h6>
+                    <p>@(string.IsNullOrEmpty(Model.Observaciones) ? "-" : Model.Observaciones)</p>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <!-- Auditoría -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Creado</h6>
+                    <p class="small">@Html.DisplayFor(model => model.CreatedAt)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Por</h6>
+                    <p class="small">@Model.CreatedBy</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Actualizado</h6>
+                    <p class="small">@Html.DisplayFor(model => model.UpdatedAt)</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted small mb-2">Por</h6>
+                    <p class="small">@Model.UpdatedBy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex gap-2">
+        <form asp-action="Delete" method="post" class="d-inline">
+            <input type="hidden" asp-for="IdVenta" />
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Eliminar Venta
+            </button>
+        </form>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Cancelar
+        </a>
+    </div>
+</div>

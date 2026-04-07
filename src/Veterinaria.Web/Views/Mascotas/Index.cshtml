@@ -1,0 +1,109 @@
+@model IEnumerable<Veterinaria.Web.ViewModels.Mascotas.MascotaViewModel>
+
+@{
+    ViewData["Title"] = "Mascotas";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Mascotas</h1>
+        <div class="page-sub">@Model.Count() pacientes activos</div>
+    </div>
+    <a asp-action="Create" class="btn-vet btn-primary-vet">
+        <i class="bi bi-plus"></i> Nueva mascota
+    </a>
+</div>
+
+<div style="margin-bottom:16px;">
+    <input type="text" id="searchInput" class="form-control-vet"
+           placeholder="Buscar por nombre, cliente, especie o raza..."
+           style="max-width:380px;">
+</div>
+
+<div class="vet-card">
+    <div class="vet-card-body" style="padding:0">
+        <table class="vet-table" id="mascotasTable">
+            <thead>
+                <tr>
+                    <th>Mascota</th>
+                    <th>Cliente</th>
+                    <th>Especie / Raza</th>
+                    <th>Sexo</th>
+                    <th>Microchip</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@m.Nombre</div>
+                            @if (m.FechaNacimiento.HasValue)
+                            {
+                                <div style="font-size:12px;color:var(--vet-muted)">
+                                    Nac: @m.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                                </div>
+                            }
+                        </td>
+                        <td>@m.ClienteNombre</td>
+                        <td>
+                            <span>@m.EspecieNombre</span>
+                            @if (!string.IsNullOrEmpty(m.RazaNombre) && m.RazaNombre != "Mestizo/Sin Definir")
+                            {
+                                <span style="color:var(--vet-muted)"> / @m.RazaNombre</span>
+                            }
+                        </td>
+                        <td>
+                            @if (m.Sexo == "M")
+                            {
+                                <span class="badge-vet badge-blue">Macho</span>
+                            }
+                            else
+                            {
+                                <span class="badge-vet badge-yellow">Hembra</span>
+                            }
+                        </td>
+                        <td class="mono" style="font-size:12px">
+                            @(string.IsNullOrEmpty(m.MicrochipId) ? "—" : m.MicrochipId)
+                        </td>
+                        <td style="text-align:right">
+                            <div style="display:flex;gap:4px;justify-content:flex-end">
+                                <a asp-action="Details" asp-route-id="@m.IdMascota"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Ver">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@m.IdMascota"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@m.IdMascota"
+                                      method="post" id="del-mas-@m.IdMascota" style="display:none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <button type="button"
+                                        class="btn-vet btn-ghost-vet btn-icon"
+                                        onclick="confirmDelete('del-mas-@m.IdMascota')"
+                                        title="Eliminar"
+                                        style="color:var(--vet-danger);border-color:transparent">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#mascotasTable tbody tr').forEach(r => {
+                r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

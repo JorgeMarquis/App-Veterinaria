@@ -1,0 +1,103 @@
+@model IEnumerable<Veterinaria.Domain.Entities.Compra>
+
+@{
+    ViewData["Title"] = "Compras";
+    var totalCompras = Model.Where(c => c.EstadoPago != "Anulado").Sum(c => c.Total);
+}
+
+<div class="page-header">
+    <div>
+        <h1>Compras</h1>
+        <div class="page-sub">
+            @Model.Count() órdenes · Total: <strong class="mono">S/ @totalCompras.ToString("N2")</strong>
+        </div>
+    </div>
+    <a asp-action="Create" class="btn-vet btn-primary-vet">
+        <i class="bi bi-plus"></i> Nueva compra
+    </a>
+</div>
+
+<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" id="searchInput" class="form-control-vet"
+           placeholder="Buscar proveedor o factura..." style="max-width:300px;">
+    <select id="filterEstado" class="form-control-vet" style="width:160px;">
+        <option value="">Todos los estados</option>
+        <option>Pagado</option>
+        <option>Pendiente</option>
+        <option>Parcial</option>
+    </select>
+</div>
+
+<div class="vet-card">
+    <div class="vet-card-body" style="padding:0">
+        <table class="vet-table" id="comprasTable">
+            <thead>
+                <tr>
+                    <th>N° Factura</th>
+                    <th>Proveedor</th>
+                    <th>Forma pago</th>
+                    <th>Fecha</th>
+                    <th style="text-align:right">Subtotal</th>
+                    <th style="text-align:right">IGV</th>
+                    <th style="text-align:right">Total</th>
+                    <th>Estado</th>
+                    <th style="text-align:right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    var eClass = c.EstadoPago switch
+                    {
+                        "Pagado" => "badge-green",
+                        "Parcial" => "badge-yellow",
+                        _ => "badge-gray"
+                    };
+                    <tr data-estado="@c.EstadoPago">
+                        <td class="mono" style="font-size:12px">@c.NumeroFactura</td>
+                        <td style="font-weight:500">@c.IdProveedorNavigation?.RazonSocial</td>
+                        <td>@c.IdFormaPagoNavigation?.Nombre</td>
+                        <td class="mono" style="font-size:12px">@c.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td style="text-align:right" class="mono">S/ @c.Subtotal.ToString("N2")</td>
+                        <td style="text-align:right" class="mono">S/ @c.Impuestos.ToString("N2")</td>
+                        <td style="text-align:right" class="mono"><strong>S/ @c.Total.ToString("N2")</strong></td>
+                        <td><span class="badge-vet @eClass">@c.EstadoPago</span></td>
+                        <td style="text-align:right">
+                            <div style="display:flex;gap:4px;justify-content:flex-end">
+                                <a asp-action="Details" asp-route-id="@c.IdCompra"
+                                       class="btn-vet btn-ghost-vet btn-icon" title="Ver">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@c.IdCompra"
+                                      method="post" id="del-com-@c.IdCompra" style="display:none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <button type="button"
+                                        class="btn-vet btn-ghost-vet btn-icon"
+                                        onclick="confirmDelete('del-com-@c.IdCompra')"
+                                        title="Eliminar"
+                                        style="color:var(--vet-danger);border-color:transparent">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applyFilter() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const e = document.getElementById('filterEstado').value;
+            document.querySelectorAll('#comprasTable tbody tr').forEach(r => {
+                r.style.display = (r.textContent.toLowerCase().includes(q) && (!e || r.dataset.estado === e)) ? '' : 'none';
+            });
+        }
+        document.getElementById('searchInput').addEventListener('input', applyFilter);
+        document.getElementById('filterEstado').addEventListener('change', applyFilter);
+    </script>
+}

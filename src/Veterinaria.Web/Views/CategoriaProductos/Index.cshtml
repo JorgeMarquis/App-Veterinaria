@@ -1,0 +1,96 @@
+@model IEnumerable<Veterinaria.Web.ViewModels.CategoriaProductos.CategoriaProductoViewModel>
+
+@{
+    ViewData["Title"] = "Categoria de Producto";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Categorías de Productos</h1>
+        <div class="page-sub">@Model.Count() categorías activas en catálogo</div>
+    </div>
+    <a asp-action="Create" class="btn-vet btn-primary-vet">
+        <i class="bi bi-plus"></i> Nueva categoría
+    </a>
+</div>
+
+<div style="margin-bottom:1rem;">
+    <input type="text" id="searchInput" class="form-control-vet" 
+            placeholder="Buscar por categoria..."
+            style="max-width:360px;" />
+</div>
+
+<div class="vet-card">
+    <div class="vet-card-body p-0">
+        <table class="vet-table" id="categoriasTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>EsMedicamento</th>
+                    <th>RequiereReceta</th>
+                    <th>Activo</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) 
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@item.Nombre</div>
+                            <div style="color:var(--vet-muted);font-size:.75rem">@item.Descripcion</div>
+                        </td>
+                        <td>
+                            @if (item.EsMedicamento)
+                            {
+                                <span class="badge bg-primary"><i class="bi bi-capsule"></i>Medicamento</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No Medicamento</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.RequiereReceta)
+                            {
+                                <span class="badge bg-danger"><i class="bi bi-file-medical"></i>Receta</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-black">Sin Receta</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Activo)
+                            {
+                                <span class="badge bg-success">Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactivo</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@item.IdCategoria"
+                                    class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-router-id="@item.IdCategoria" class="btn-vet btn-ghost-vet btn-icon" title="Ver">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.IdCategoria">Details</a> |
+                                <a href="#" class="btn btn-sm btn-outline-danger delete-btn"
+                                    data-url="@Url.Action("Delete", "CategoriaProductos", new {id = item.IdCategoria})">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+

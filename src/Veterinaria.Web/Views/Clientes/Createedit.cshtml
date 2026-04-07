@@ -1,0 +1,139 @@
+@model Veterinaria.Web.ViewModels.Clientes.ClienteViewModel
+
+@{
+    var isEdit = Model.IdCliente > 0;
+    ViewData["Title"] = isEdit ? "Editar cliente" : "Nuevo cliente";
+}
+
+<div class="page-header">
+    <div>
+        <h1>@ViewData["Title"]</h1>
+        <div class="page-sub">
+            @(isEdit ? $"Modificando #{Model.IdCliente} — {Model.NombreCompleto}" : "Complete los datos del nuevo cliente")
+        </div>
+    </div>
+    <a asp-action="Index" class="btn-vet btn-ghost-vet">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+</div>
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" id="clienteForm">
+    @Html.AntiForgeryToken()
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="IdCliente" />
+    }
+
+    <div asp-validation-summary="ModelOnly" class="alert-vet alert-danger-vet mb-3" style="@(ViewData.ModelState.IsValid ? "display:none" : "")">
+        <i class="bi bi-exclamation-circle"></i>
+        <div>Corrija los errores antes de continuar.</div>
+    </div>
+
+    <!-- Card principal -->
+    <div class="vet-card" style="max-width:720px;">
+        <div class="vet-card-body">
+
+            <!-- Identidad -->
+            <div class="form-section-title">Datos personales</div>
+            <div style="display:grid;grid-template-columns:1fr 160px 180px;gap:14px;margin-bottom:20px;">
+                <div>
+                    <label class="form-label-vet" asp-for="NombreCompleto"></label>
+                    <input asp-for="NombreCompleto" class="form-control-vet" placeholder="Nombre completo" />
+                    <span asp-validation-for="NombreCompleto" class="form-error"></span>
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="TipoIdentificacion"></label>
+                    <select asp-for="TipoIdentificacion" class="form-control-vet">
+                        <option value="">—</option>
+                        <option>DNI</option>
+                        <option>RUC</option>
+                        <option>Pasaporte</option>
+                        <option>Carnet de Extranjería</option>
+                    </select>
+                    <span asp-validation-for="TipoIdentificacion" class="form-error"></span>
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="NumIdentificacion"></label>
+                    <input asp-for="NumIdentificacion" class="form-control-vet mono" placeholder="00000000" />
+                    <span asp-validation-for="NumIdentificacion" class="form-error"></span>
+                </div>
+            </div>
+
+            <!-- Contacto -->
+            <div class="form-section-title">Contacto</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;">
+                <div>
+                    <label class="form-label-vet" asp-for="Email"></label>
+                    <input asp-for="Email" type="email" class="form-control-vet" placeholder="correo@ejemplo.com" />
+                    <span asp-validation-for="Email" class="form-error"></span>
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="TelefonoPrincipal"></label>
+                    <input asp-for="TelefonoPrincipal" class="form-control-vet mono" placeholder="999 999 999" />
+                    <span asp-validation-for="TelefonoPrincipal" class="form-error"></span>
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="TelefonoAlternativo"></label>
+                    <input asp-for="TelefonoAlternativo" class="form-control-vet mono" placeholder="Opcional" />
+                </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="form-section-title">Dirección</div>
+            <div style="display:grid;grid-template-columns:1fr 200px;gap:14px;margin-bottom:20px;">
+                <div>
+                    <label class="form-label-vet" asp-for="Direccion"></label>
+                    <input asp-for="Direccion" class="form-control-vet" placeholder="Av. / Jr. / Calle..." />
+                    <span asp-validation-for="Direccion" class="form-error"></span>
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="Ciudad"></label>
+                    <input asp-for="Ciudad" class="form-control-vet" placeholder="Lima" />
+                    <span asp-validation-for="Ciudad" class="form-error"></span>
+                </div>
+            </div>
+
+            <!-- Emergencia -->
+            <div class="form-section-title">Contacto de emergencia</div>
+            <div style="display:grid;grid-template-columns:1fr 220px;gap:14px;margin-bottom:20px;">
+                <div>
+                    <label class="form-label-vet" asp-for="ContactoEmergencia"></label>
+                    <input asp-for="ContactoEmergencia" class="form-control-vet" placeholder="Nombre del contacto" />
+                </div>
+                <div>
+                    <label class="form-label-vet" asp-for="TelefonoEmergencia"></label>
+                    <input asp-for="TelefonoEmergencia" class="form-control-vet mono" placeholder="999 999 999" />
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div style="margin-bottom:20px;">
+                <label class="form-label-vet" asp-for="Observaciones"></label>
+                <textarea asp-for="Observaciones" class="form-control-vet" rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+
+            @if (isEdit)
+            {
+                <div style="margin-bottom:16px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+                        <input asp-for="Activo" type="checkbox" style="accent-color:var(--vet-accent);width:15px;height:15px;" />
+                        Cliente activo
+                    </label>
+                </div>
+            }
+
+            <hr class="divider">
+
+            <div style="display:flex;gap:8px;">
+                <button type="submit" class="btn-vet btn-primary-vet">
+                    <i class="bi bi-check-lg"></i> @(isEdit ? "Guardar cambios" : "Registrar cliente")
+                </button>
+                <a asp-action="Index" class="btn-vet btn-ghost-vet">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,124 @@
+@model IEnumerable<Veterinaria.Web.ViewModels.Mascotas.MascotaViewModel>
+@{
+    ViewData["Title"] = "Mascotas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0 fw-bold text-dark">Mascotas</h2>
+        <span class="text-muted small">@Model.Count() pacientes activos</span>
+    </div>
+    <a asp-action="Create" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm">
+        <i class="bi bi-plus-lg"></i> Nueva mascota
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <input type="text" id="searchInput" class="form-control mb-4 w-50" placeholder="🔍 Buscar por nombre, cliente o microchip...">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="mascotasTable">
+                <thead class="table-light text-secondary">
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Cliente</th>
+                        <th>Especie / Raza</th>
+                        <th>Sexo</th>
+                        <th>Microchip</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold text-dark">@m.Nombre</div>
+                                @if (m.FechaNacimiento.HasValue)
+                                {
+                                    <div class="text-muted" style="font-size: 0.8rem;">
+                                        Nac: @m.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                                    </div>
+                                }
+                            </td>
+                            <td>@m.ClienteNombre</td>
+                            <td>
+                                <span class="d-block">@m.EspecieNombre</span>
+                                <span class="text-muted small">@m.RazaNombre</span>
+                            </td>
+                            <td>
+                                @if (m.Sexo == "M")
+                                {
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">Macho</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle">Hembra</span>
+                                }
+                            </td>
+                            <td class="font-monospace text-muted small">
+                                @(string.IsNullOrEmpty(m.MicrochipId) ? "—" : m.MicrochipId)
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-id="@m.IdMascota" class="btn btn-sm btn-light text-primary shadow-sm">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <form asp-action="Delete" asp-route-id="@m.IdMascota" method="post" id="del-mas-@m.IdMascota" class="d-none">
+                                    @Html.AntiForgeryToken()
+                                </form>
+
+                                <button type="button" class="btn btn-sm btn-light text-danger shadow-sm ms-1"
+                                        onclick="confirmDelete('del-mas-@m.IdMascota')" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title text-danger fw-bold" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar la mascota <strong id="deleteMascotaNombre"></strong>? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" asp-action="Delete">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Lógica de filtrado en cliente
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('#mascotasTable tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        });
+
+        // Lógica del Modal Dinámico
+        function showDeleteModal(id, nombre) {
+            document.getElementById('deleteMascotaNombre').textContent = nombre;
+            // Modifica dinámicamente el action del formulario para apuntar al ID correcto
+            document.getElementById('deleteForm').action = `/Mascotas/Delete/${id}`;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+}
